@@ -11,11 +11,15 @@ import (
 	"github.com/p4elkab35t/salyte_backend/services/social/pkg/models"
 )
 
-func NewPostgresPostRepository(db *pgxpool.Pool) PostRepository {
+func NewPostgresPostRepositorySQL(db *pgxpool.Pool) PostRepository {
 	return &PostgresRepositorySQL{db: db}
 }
 
-func NewPostgresInteractionRepository(db *pgxpool.Pool) InteractionRepository {
+func NewPostgresInteractionRepositorySQL(db *pgxpool.Pool) InteractionRepository {
+	return &PostgresRepositorySQL{db: db}
+}
+
+func NewPostgresCommentRepositorySQL(db *pgxpool.Pool) CommentRepository {
 	return &PostgresRepositorySQL{db: db}
 }
 
@@ -149,10 +153,6 @@ func (r *PostgresRepositorySQL) GetPostsByCommunityID(ctx context.Context, commu
 		posts = append(posts, &post)
 	}
 	return posts, nil
-}
-
-func NewPostgresCommentRepository(db *pgxpool.Pool) CommentRepository {
-	return &PostgresRepositorySQL{db: db}
 }
 
 func (r *PostgresRepositorySQL) CreateComment(ctx context.Context, comment *models.Comment) (*models.Comment, error) {
