@@ -1,4 +1,4 @@
-package auth
+package main
 
 import (
 	"github.com/p4elkab35t/salyte_backend/services/auth/pkg/handlers"
