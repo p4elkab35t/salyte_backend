@@ -36,6 +36,10 @@ func NewPostgreSQL(ctx context.Context, connString string) (*postgres, error) {
 	return pgInstance, nil
 }
 
+func (pg *postgres) GetDB() *pgxpool.Pool {
+	return pg.db
+}
+
 func (pg *postgres) Ping(ctx context.Context) error {
 	return pg.db.Ping(ctx)
 }

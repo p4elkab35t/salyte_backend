@@ -14,8 +14,8 @@ type TokenHandler struct {
 	authLogic *logic.AuthLogicService
 }
 
-func NewTokenHandler(authLogic *logic.AuthLogicService) *SignInHandler {
-	return &SignInHandler{authLogic}
+func NewTokenHandler(authLogic *logic.AuthLogicService) *TokenHandler {
+	return &TokenHandler{authLogic}
 }
 
 func (h *TokenHandler) VerifyToken(w http.ResponseWriter, r *http.Request) {
@@ -45,18 +45,15 @@ func (h *TokenHandler) VerifyToken(w http.ResponseWriter, r *http.Request) {
 
 func (h *TokenHandler) SignOut(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
-	if r.Method == "DELETE" {
+	if r.Method == "GET" {
 		// Parse the form data
-		r.ParseMultipartForm(10 << 20)
-		// Get the form data
-		email := r.Form.Get("email")
-		password := r.Form.Get("password")
+		token := r.Header.Get("Authorization")
 
-		result, err := h.authLogic.SignUp(ctx, email, password)
+		err := h.authLogic.SignOut(ctx, token)
 
-		if err != nil {
+		if err == nil {
 			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(result)
+			json.NewEncoder(w).Encode(true)
 			w.WriteHeader(http.StatusOK)
 			fmt.Fprintf(w, "Success")
 		} else {

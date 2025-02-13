@@ -87,7 +87,7 @@ func (r *RedisSessionRepository) GetSessionByToken(ctx context.Context, token st
 }
 
 // Get all active sessions for a user
-func (r *RedisSessionRepository) GetAllActiveSessionsByUserID(ctx context.Context, userID string) ([]*models.Session, error) {
+func (r *RedisSessionRepository) GetAllActiveSessionByUserID(ctx context.Context, userID string) ([]*models.Session, error) {
 	if userID == "" {
 		return nil, errors.New("user_id is required")
 	}

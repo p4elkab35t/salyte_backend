@@ -1,0 +1,49 @@
+# config.yaml - General configuration for the application
+
+server:
+  host: "localhost"     # The host to bind the server to (localhost or a specific IP)
+  port: 8081            # The port on which the server will run
+  read_timeout: 15      # The timeout for reading the request
+  write_timeout: 15     # The timeout for writing the response
+  idle_timeout: 120     # Idle connection timeout
+  enable_cors: true     # Whether to enable CORS (Cross-Origin Resource Sharing)
+
+database:
+  postgres:
+    host: "localhost"    # PostgreSQL host
+    port: 5432           # PostgreSQL port
+    user: "postgres"    # PostgreSQL username
+    password: "1"   # PostgreSQL password
+    db_name: "salyte_user"   # PostgreSQL database name
+    ssl_mode: "disable"  # SSL mode for connecting to PostgreSQL (disable or require)
+    max_connections: 10  # Maximum number of database connections
+    max_idle_connections: 5  # Maximum number of idle connections
+
+redis:
+  host: "localhost"       # Redis host
+  port: 6379              # Redis port
+  password: ""            # Redis password (if any)
+  db: 0                   # Redis database (0 by default)
+  session_expiry: 3600    # Session expiry time in seconds (e.g., 1 hour)
+  
+logging:
+  level: "info"            # Log level: debug, info, warn, error, fatal, panic
+  format: "json"           # Log format: text or json
+  output: "stdout"         # Where to output logs (stdout or a file path)
+
+# Feature flags and other custom settings
+features:
+  enable_registration: true     # Enable or disable user registration
+  enable_email_notifications: false # Enable or disable email notifications for user actions
+  enable_2fa: false            # Enable or disable two-factor authentication (2FA)
+  
+api:
+  rate_limit:
+    enabled: true              # Enable API rate limiting
+    max_requests: 100          # Max number of requests per IP per minute
+    window_seconds: 60         # The time window for rate limiting (seconds)
+  
+  cors:
+    allowed_origins: ["*"]     # Allowed origins for CORS (use ["*"] to allow all)
+    allowed_methods: ["GET", "POST", "PUT", "DELETE"] # Allowed HTTP methods
+    allowed_headers: ["Content-Type", "Authorization"] # Allowed headers

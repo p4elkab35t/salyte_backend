@@ -4,7 +4,6 @@ import (
 	// "encoding/json"
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/p4elkab35t/salyte_backend/services/auth/pkg/logic"
@@ -14,8 +13,8 @@ type SignUpHandler struct {
 	authLogic *logic.AuthLogicService
 }
 
-func NewSignUpHandler(authLogic *logic.AuthLogicService) *SignInHandler {
-	return &SignInHandler{authLogic}
+func NewSignUpHandler(authLogic *logic.AuthLogicService) *SignUpHandler {
+	return &SignUpHandler{authLogic}
 }
 
 func (h *SignUpHandler) SignUp(w http.ResponseWriter, r *http.Request) {
@@ -29,16 +28,17 @@ func (h *SignUpHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 
 		result, err := h.authLogic.SignUp(ctx, email, password)
 
-		if err != nil {
+		if err == nil {
 			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(result)
 			w.WriteHeader(http.StatusOK)
-			fmt.Fprintf(w, "Success")
+			json.NewEncoder(w).Encode(result)
+			// fmt.Fprintf(w, "Success")
 		} else {
 			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(err)
+
 			w.WriteHeader(http.StatusUnauthorized)
-			fmt.Fprintf(w, "Unauthorized")
+			json.NewEncoder(w).Encode(err)
+			// fmt.Fprintf(w, "Unauthorized")
 		}
 	}
 	// Create a map to store the response

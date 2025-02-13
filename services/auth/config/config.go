@@ -1,29 +1,23 @@
 package config
 
-// "github.com/spf13/viper"
+import (
+	"fmt"
+	"log"
 
-type Config struct {
-	DBHost     string
-	DBPort     int
-	DBUser     string
-	DBPassword string
-	DBName     string
+	"github.com/spf13/viper"
+)
+
+func LoadConfig(config *Config) {
+	viper.SetConfigName("config")
+	viper.AddConfigPath("./services/auth/config")
+	viper.AutomaticEnv()
+
+	// Read in the configuration file
+	if err := viper.ReadInConfig(); err != nil {
+		fmt.Printf("Error reading config file, %s", err)
+	}
+
+	if err := viper.Unmarshal(&config); err != nil {
+		log.Fatalf("Unable to decode config into struct: %v", err)
+	}
 }
-
-// func LoadConfig() (*Config, error) {
-//     viper.SetConfigName("config")
-//     viper.SetConfigType("yaml")
-//     viper.AddConfigPath(".")
-//     if err := viper.ReadInConfig(); err != nil {
-//         return nil, err
-//     }
-
-//     config := &Config{
-//         DBHost:     viper.GetString("database.host"),
-//         DBPort:     viper.GetInt("database.port"),
-//         DBUser:     viper.GetString("database.user"),
-//         DBPassword: viper.GetString("database.password"),
-//         DBName:     viper.GetString("database.name"),
-//     }
-//     return config, nil
-// }

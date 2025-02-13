@@ -25,7 +25,7 @@ func (r *PostgresRepositorySQL) CheckCredentials(ctx context.Context, email, pas
 		return nil, errors.New("email and password are required")
 	}
 	row := r.db.QueryRow(ctx,
-		"SELECT * FROM users WHERE email = $1 AND password = $2",
+		"SELECT * FROM users WHERE email = $1 AND password_hash = $2",
 		email, password)
 	user := &models.User{}
 	err := row.Scan(&user.User_id, &user.Email, &user.Password_hash, &user.Is_verified, &user.CreatedAt, &user.UpdatedAt)

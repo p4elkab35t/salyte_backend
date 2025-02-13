@@ -5,6 +5,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+
+	// "fmt"
 	"net/http"
 
 	"github.com/p4elkab35t/salyte_backend/services/auth/pkg/logic"
@@ -23,19 +25,19 @@ func (h *SignInHandler) SignIn(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		// Get the token session cookie
 		token := r.Header.Get("Authorization")
-
+		fmt.Println(token)
 		result, err := h.authLogic.CheckToken(ctx, token)
-
+		fmt.Println(result, err)
 		if err == nil {
 			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(result)
 			w.WriteHeader(http.StatusOK)
-			fmt.Fprintf(w, "Success")
+			json.NewEncoder(w).Encode(result)
+			// fmt.Fprintf(w, "Success")
 		} else {
 			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(err)
 			w.WriteHeader(http.StatusUnauthorized)
-			fmt.Fprintf(w, "Unauthorized")
+			json.NewEncoder(w).Encode(err)
+			// fmt.Fprintf(w, "Unauthorized")
 		}
 	}
 	if r.Method == "POST" {
@@ -49,14 +51,14 @@ func (h *SignInHandler) SignIn(w http.ResponseWriter, r *http.Request) {
 
 		if err == nil {
 			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(result)
 			w.WriteHeader(http.StatusOK)
-			fmt.Fprintf(w, "Success")
+			json.NewEncoder(w).Encode(result)
+			// fmt.Fprintf(w, "Success")
 		} else {
 			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(err)
 			w.WriteHeader(http.StatusUnauthorized)
-			fmt.Fprintf(w, "Unauthorized")
+			json.NewEncoder(w).Encode(err)
+			// fmt.Fprintf(w, "Unauthorized")
 		}
 	}
 	// Create a map to store the response

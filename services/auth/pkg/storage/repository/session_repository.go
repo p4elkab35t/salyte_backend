@@ -14,9 +14,11 @@ type SessionRepository interface {
 	// Create new session
 	CreateSession(ctx context.Context, session *models.Session) (*models.Session, error)
 	// Get All session for user by user_id
-	GetAllActiveSessionByUserId(ctx context.Context, user_id string) ([]*models.Session, error)
+	GetAllActiveSessionByUserID(ctx context.Context, user_id string) ([]*models.Session, error)
 	// Get session by token
 	GetSessionByToken(ctx context.Context, token string) (*models.Session, error)
 	// Update session by token
 	UpdateSession(ctx context.Context, session *models.Session) error
+	// Delete all sessions for user by user_id
+	DeleteAllSessionsByUserID(ctx context.Context, user_id string) error
 }
