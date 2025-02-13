@@ -14,7 +14,7 @@ type PostgresRepositorySQL struct {
 	db *pgxpool.Pool
 }
 
-func NewPostgresRepositorySQL(db *pgxpool.Pool) UserRepository {
+func NewPostgresUserRepositorySQL(db *pgxpool.Pool) UserRepository {
 	return &PostgresRepositorySQL{db: db}
 }
 
@@ -127,8 +127,12 @@ func (r *PostgresRepositorySQL) GetUserByToken(ctx context.Context, token string
 		return nil, errors.New("token are required")
 	}
 	row := r.db.QueryRow(ctx,
-		"SELECT users.* FROM users JOIN sessions ON users.user_id = sessions.user_id WHERE sessions.session_token = $1",
-	)
+		`SELECT users.* FROM users JOIN sessions 
+		ON users.user_id = sessions.user_id 
+		WHERE sessions.session_token = $1 
+		AND (sessions.expires_at > NOW() 
+		OR sessions.expires_at IS NULL)`,
+		token)
 	user := &models.User{}
 	err := row.Scan(&user.User_id, &user.Email, &user.Password_hash, &user.Is_verified, &user.CreatedAt, &user.UpdatedAt)
 
