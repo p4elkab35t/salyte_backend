@@ -89,7 +89,7 @@ func (r *PostgresRepositorySQL) GetUserByEmail(ctx context.Context, email string
 		return nil, errors.New("email are required")
 	}
 	row := r.db.QueryRow(ctx,
-		"SELECT * FROM users WHERE email = $1 AND password_hash = $2",
+		"SELECT * FROM users WHERE email = $1",
 		email)
 	user := &models.User{}
 	err := row.Scan(&user.User_id, &user.Email, &user.Password_hash, &user.Is_verified, &user.CreatedAt, &user.UpdatedAt)

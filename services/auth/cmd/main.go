@@ -4,11 +4,12 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"net/http"
 
 	"github.com/p4elkab35t/salyte_backend/services/auth/config"
 	"github.com/p4elkab35t/salyte_backend/services/auth/pkg/logic"
-	"github.com/p4elkab35t/salyte_backend/services/auth/pkg/server/handlers"
+
+	// "github.com/p4elkab35t/salyte_backend/services/auth/pkg/server/handlers"
+	"github.com/p4elkab35t/salyte_backend/services/auth/pkg/server"
 	"github.com/p4elkab35t/salyte_backend/services/auth/pkg/storage/database"
 	"github.com/p4elkab35t/salyte_backend/services/auth/pkg/storage/repository"
 )
@@ -50,24 +51,37 @@ func main() {
 
 	userRepository := repository.NewPostgresUserRepositorySQL(db.GetDB())
 	postgresSessionRepository := repository.NewPostgresSessionRepositorySQL(db.GetDB())
+
+	// TODO: Implement Redis session repository
 	//redisSessionRepository := repository.NewRedisSessionRepository(redis.GetClient())
+
+	securityLogRepository := repository.NewPostgresSecurityLogRepositorySQL(db.GetDB())
 
 	// load services
 
-	authService := logic.NewAuthLogic(userRepository, postgresSessionRepository) //, redisSessionRepository)
+	// Logger service first (it will be injected into other services to log security importnant actions)
+
+	securityLoggerService := logic.NewSecurityLogLogicService(securityLogRepository)
+
+	authService := logic.NewAuthLogic(userRepository, postgresSessionRepository, securityLoggerService) //, redisSessionRepository)
+
+	// load grpc server
+
+	grpcServer := server.NewGRPCServer(authService, securityLoggerService)
+	grpcServer.Start()
 
 	// load handlers
 
-	signupHandler := handlers.NewSignUpHandler(authService)
-	signinHandler := handlers.NewSignInHandler(authService)
-	tokenHandler := handlers.NewTokenHandler(authService)
+	// signupHandler := handlers.NewSignUpHandler(authService)
+	// signinHandler := handlers.NewSignInHandler(authService)
+	// tokenHandler := handlers.NewTokenHandler(authService)
 
-	// enable routes
+	// // enable routes
 
-	http.HandleFunc("/auth/signin", signinHandler.SignIn)
-	http.HandleFunc("/auth/signup", signupHandler.SignUp)
-	http.HandleFunc("/auth/verify", tokenHandler.VerifyToken)
-	http.HandleFunc("/auth/signout", tokenHandler.SignOut)
-	log.Fatal(http.ListenAndServe(":8081", nil))
-	log.Println("Server is running on port 8080")
+	// http.HandleFunc("/auth/signin", signinHandler.SignIn)
+	// http.HandleFunc("/auth/signup", signupHandler.SignUp)
+	// http.HandleFunc("/auth/verify", tokenHandler.VerifyToken)
+	// http.HandleFunc("/auth/signout", tokenHandler.SignOut)
+	// log.Fatal(http.ListenAndServe(":8081", nil))
+	// log.Println("Server is running on port 8080")
 }

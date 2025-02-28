@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package security_logs;
+
+option go_package = "github.com/p4elkab35t/salyte_backend/services/auth/pkg/proto/auth_service";
+
+service SecurityLogsService {
+    rpc GetSecurityLogsWithUsedID(GetSecurityLogsByUserIDRequest) returns (GetSecurityLogsByUserIDResponse);
+    rpc GetSecurityLogWithID(GetSecurityLogWithIDRequest) returns (GetSecurityLogWithIDResponse);
+}
+
+message GetSecurityLogsByUserIDRequest {
+    string user_id = 1;
+    int32 page = 2;
+    int32 limit = 3;
+}
+
+message GetSecurityLogsByUserIDResponse {
+    repeated SecurityLog security_logs = 1;
+    int32 status = 2;
+}
+
+message GetSecurityLogWithIDRequest {
+    string log_id = 1;
+}
+
+message GetSecurityLogWithIDResponse {
+    SecurityLog security_log = 1;
+    int32 status = 2;
+}
+
+message SecurityLog {
+    string log_id = 1;
+    string user_id = 2;
+    string action = 3;
+    // string ip = 4;
+    string timestamp = 4;
+}

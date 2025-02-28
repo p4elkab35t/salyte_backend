@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package auth_service;
+
+option go_package = "github.com/p4elkab35t/salyte_backend/services/auth/pkg/proto/auth_service";
+
+service AuthService {
+    rpc SignInCredentials(SignInCredentialsRequest) returns (SignInResponse);
+    rpc SignInToken(SignInTokenRequest) returns (SignInResponse);
+    rpc SignUp(SignUpRequest) returns (SignUpResponse);
+    rpc VerifyToken(VerifyTokenRequest) returns (VerifyTokenResponse);
+    rpc SignOut(SignOutRequest) returns (SignOutResponse);
+}
+
+message SignInCredentialsRequest {
+    string email = 1;
+    string password = 2;
+}
+
+message SignInTokenRequest {
+    string token = 1;
+}
+
+message SignInResponse {
+    string token = 1;
+    string user_id = 2;
+    int32 status = 3;
+}
+
+message SignUpRequest {
+    string email = 1;
+    string password = 2;
+}
+
+message SignUpResponse {
+    string user_id = 1;
+    string token = 2;
+    int32 status = 3;
+}
+
+message VerifyTokenRequest {
+    string token = 1;
+    string user_id = 2;
+}
+
+message VerifyTokenResponse {
+    bool is_valid = 1;
+    int32 status = 2;
+}
+
+message SignOutRequest {
+    string token = 1;
+}
+
+message SignOutResponse {
+    int32 status = 1;
+}

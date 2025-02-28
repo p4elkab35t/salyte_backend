@@ -28,16 +28,13 @@ func (h *TokenHandler) VerifyToken(w http.ResponseWriter, r *http.Request) {
 
 		result, err := h.authLogic.VerifySession(ctx, token, user_id)
 
-		if result == true {
-			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(result)
+		w.Header().Set("Content-Type", "application/json")
+		if result {
 			w.WriteHeader(http.StatusOK)
-			fmt.Fprintf(w, "Success")
+			json.NewEncoder(w).Encode(result)
 		} else {
-			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(err)
 			w.WriteHeader(http.StatusUnauthorized)
-			fmt.Fprintf(w, "Unauthorized")
+			json.NewEncoder(w).Encode(err)
 		}
 	}
 	// Create a map to store the response
