@@ -1,11 +1,12 @@
-import { Logger } from "../../logger/logger";
-import client from "../../grpc_client/auth.client";
-import type { AuthService } from "../../grpc_client/proto/auth.proto";
+import { Logger } from "../../../logger/logger";
+import authGRPCClient from "../../../grpc_client/auth.client";
+import type { AuthService } from "../../../grpc_client/proto/auth.proto";
 
 // Type the client object as AuthService
-const authClient: AuthService = client;
+const authClient: AuthService = authGRPCClient;
 
 const routes = new Map<string, { method: string[], handler: Function }>([
+    ["/lifecheck", { method: ["GET"], handler: lifeCheck }],
     ["/verify", { method: ["GET"], handler: verifyToken }],
     ["/signin", { method: ["GET", "POST"], handler: signIn }],
     ["/signup", { method: ["POST"], handler: signUp }],
@@ -30,6 +31,11 @@ const routes = new Map<string, { method: string[], handler: Function }>([
   
     Logger.warn(`Auth route not found`, { path });
     return new Response(JSON.stringify({ error: "Route not found" }), { status: 404 });
+  }
+
+  async function lifeCheck(req: Request, restPath: string) {
+    Logger.info("Life check", { method: req.method });
+    return new Response(JSON.stringify({ message: "Auth Service Alive" }), { status: 200 });
   }
   
   async function verifyToken(req: Request) {

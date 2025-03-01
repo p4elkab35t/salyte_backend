@@ -3,7 +3,7 @@ import protoLoader from '@grpc/proto-loader';
 import { CONFIG } from '../config/config';
 
 const packageDefinition = protoLoader.loadSync(
-  `${__dirname}/proto/auth.proto`,
+  `${__dirname}/proto/log.proto`,
   {
     keepCase: true,
     longs: String,
@@ -15,15 +15,15 @@ const packageDefinition = protoLoader.loadSync(
 
 const protoDescriptor = grpc.loadPackageDefinition(packageDefinition) as any;
 
-if (!protoDescriptor || !protoDescriptor.auth_service) {
+if (!protoDescriptor || !protoDescriptor.security_logs) {
   throw new Error('Failed to load auth service definition from proto file');
 }
 
-const auth = protoDescriptor.auth_service;
+const securityLogs = protoDescriptor.security_logs;
 
-const authGRPCClient = new auth.AuthService(
+const securityLogsGRPCClient = new securityLogs.SecurityLogsService(
   CONFIG.AUTH_SERVICE_URL,
   grpc.credentials.createInsecure()
 );
 
-export default authGRPCClient;
+export default securityLogsGRPCClient;

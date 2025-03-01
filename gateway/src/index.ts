@@ -1,13 +1,15 @@
 // import socialHandler from './router/social/social.handler';
 // import messageHandler from './router/message/message.handler';
-import authHandler from './router/secure/auth.handler';
+import Bun from "bun"
+import secureServiceHandler from "./router/secure/secure.router";
 import { CONFIG } from "./config/config";
 import { Logger } from "./logger/logger";
 
 // console.log(import.meta.dir);
 
 const services = new Map<string, Function>([
-    ["/secure", authHandler],
+    ["/status", apiStatusHandler],
+    ["/secure", secureServiceHandler],
     // ["/message", messageHandler],
     // ["/social", socialHandler],
 ])
@@ -49,3 +51,8 @@ const server = Bun.serve({
   });
   
   Logger.info(`Listening on http://localhost:${server.port} ...`);
+
+  async function apiStatusHandler (req: Request, restPath: string) {
+    Logger.info("API status check", { method: req.method });
+    return new Response(JSON.stringify({ message: "API Gateway Alive" }), { status: 200 });
+  }
