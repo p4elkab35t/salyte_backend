@@ -11,12 +11,13 @@ import (
 )
 
 type MessageHandler struct {
-	messageService *logic.MessageService
+	messageService  *logic.MessageService
+	reactionService *logic.ReactionService
 	proto.UnimplementedMessagingServiceServer
 }
 
-func NewMessageHandler(messageService *logic.MessageService) *MessageHandler {
-	return &MessageHandler{messageService: messageService}
+func NewMessageHandler(messageService *logic.MessageService, reactionService *logic.ReactionService) *MessageHandler {
+	return &MessageHandler{messageService: messageService, reactionService: reactionService}
 }
 
 func (h *MessageHandler) SendMessage(ctx context.Context, req *proto.SendMessageRequest) (*proto.SendMessageResponse, error) {
@@ -132,4 +133,34 @@ func (h *MessageHandler) GetMessage(ctx context.Context, req *proto.GetMessageBy
 		// Add other fields as necessary
 	}
 	return &proto.GetMessageByIDResponse{Status: 0, Message: protoMessage}, nil
+}
+
+func (h *MessageHandler) AddReaction(ctx context.Context, req *proto.AddReactionRequest) (*proto.AddReactionResponse, error) {
+	reaction := &models.Reaction{
+		MessageID: uuid.MustParse(req.MessageId),
+		UserID:    uuid.MustParse(req.UserId),
+		Emoji:     req.Reaction,
+	}
+
+	_, err := h.reactionService.ApplyReaction(ctx, reaction.MessageID, reaction.UserID, reaction)
+	if err != nil {
+		return &proto.AddReactionResponse{Success: false}, err
+	}
+
+	return &proto.AddReactionResponse{Success: true}, nil
+}
+
+func (h *MessageHandler) RemoveReaction(ctx context.Context, req *proto.RemoveReactionRequest) (*proto.RemoveReactionResponse, error) {
+	reaction := &models.Reaction{
+		MessageID: uuid.MustParse(req.MessageId),
+		UserID:    uuid.MustParse(req.UserId),
+		Emoji:     req.Reaction,
+	}
+
+	err := h.reactionService.RemoveReaction(ctx, reaction.MessageID, reaction.UserID)
+	if err != nil {
+		return &proto.RemoveReactionResponse{Success: false}, err
+	}
+
+	return &proto.RemoveReactionResponse{Success: true}, nil
 }

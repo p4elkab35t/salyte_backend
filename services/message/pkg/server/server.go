@@ -28,10 +28,8 @@ func (s *GRPCServer) Start() {
 	}
 
 	grpcServer := grpc.NewServer()
-	messageHandler := grpc_handler.NewMessageHandler(s.messageService)
-	reactionHandler := grpc_handler.NewReactionHandler(s.reactionService)
+	messageHandler := grpc_handler.NewMessageHandler(s.messageService, s.reactionService)
 	proto.RegisterMessagingServiceServer(grpcServer, messageHandler)
-	proto.RegisterMessagingServiceServer(grpcServer, reactionHandler)
 
 	// authHandler := grpc_handler.NewAuthHandler(s.authLogic)
 	// proto.RegisterAuthServiceServer(grpcServer, authHandler)

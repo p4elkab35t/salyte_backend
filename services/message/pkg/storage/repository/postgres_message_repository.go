@@ -23,13 +23,13 @@ func NewPostgresMessageRepositorySQL(db *pgxpool.Pool) MessageRepository {
 
 func (r *PostgresRepositorySQL) SendMessage(ctx context.Context, message *models.Message) (*models.Message, error) {
 	if message.ChatID == uuid.Nil || message.SenderID == uuid.Nil || message.Content == "" {
-		return nil, errors.New("chat_id, user_id and content are required")
+		return nil, errors.New("chat_id, sender_id and content are required")
 	}
 	now := time.Now()
 	message.CreatedAt = now
 	message.UpdatedAt = now
 	row := r.db.QueryRow(ctx,
-		"INSERT INTO messages (chat_id, user_id, content, created_at, updated_at) VALUES ($1, $2, $3, $4, $5) RETURNING message_id",
+		"INSERT INTO messages (chat_id, sender_id, content, created_at, updated_at) VALUES ($1, $2, $3, $4, $5) RETURNING message_id",
 		message.ChatID, message.SenderID, message.Content, message.CreatedAt, message.UpdatedAt)
 	err := row.Scan(&message.ID)
 	if err != nil {
@@ -81,7 +81,7 @@ func (r *PostgresRepositorySQL) GetMessagesByChatID(ctx context.Context, chatID 
 		return nil, errors.New("limit must be less than or equal to 100")
 	}
 	rows, err := r.db.Query(ctx,
-		"SELECT message_id, chat_id, user_id, content, created_at, updated_at, is_deleted FROM messages WHERE chat_id = $1 AND is_deleted = FALSE ORDER BY created_at DESC LIMIT $2 OFFSET $3",
+		"SELECT message_id, chat_id, sender_id, content, created_at, updated_at, is_deleted FROM messages WHERE chat_id = $1 AND is_deleted = FALSE ORDER BY created_at DESC LIMIT $2 OFFSET $3",
 		chatID, limit, offset)
 	if err != nil {
 		return nil, err
@@ -263,7 +263,7 @@ func (r *PostgresRepositorySQL) GetMessageByID(ctx context.Context, messageID uu
 		return nil, errors.New("message_id is required")
 	}
 	row := r.db.QueryRow(ctx,
-		"SELECT message_id, chat_id, user_id, content, created_at, updated_at, is_deleted FROM messages WHERE message_id = $1 AND is_deleted = FALSE",
+		"SELECT message_id, chat_id, sender_id, content, created_at, updated_at, is_deleted FROM messages WHERE message_id = $1 AND is_deleted = FALSE",
 		messageID)
 	message := &models.Message{}
 	err := row.Scan(&message.ID, &message.ChatID, &message.SenderID, &message.Content, &message.CreatedAt, &message.UpdatedAt, &message.IsDeleted)
