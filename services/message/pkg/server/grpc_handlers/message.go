@@ -79,3 +79,57 @@ func (h *MessageHandler) EditMessage(ctx context.Context, req *proto.EditMessage
 	}
 	return &proto.EditMessageResponse{Status: 0, Message: protoMessage}, nil
 }
+
+func (h *MessageHandler) DeleteMessage(ctx context.Context, req *proto.DeleteMessageRequest) (*proto.DeleteMessageResponse, error) {
+	message, err := h.messageService.GetMessageByID(ctx, uuid.MustParse(req.MessageId), uuid.MustParse(req.UserId))
+	if err != nil {
+		return &proto.DeleteMessageResponse{Success: false}, err
+	}
+	if message == nil {
+		return &proto.DeleteMessageResponse{Success: false}, nil
+	}
+
+	err = h.messageService.DeleteMessage(ctx, message.ID, uuid.MustParse(req.UserId))
+	if err != nil {
+		return &proto.DeleteMessageResponse{Success: false}, err
+	}
+
+	return &proto.DeleteMessageResponse{Success: true}, nil
+}
+
+func (h *MessageHandler) ReadMessage(ctx context.Context, req *proto.ReadMessageRequest) (*proto.ReadMessageResponse, error) {
+	message, err := h.messageService.GetMessageByID(ctx, uuid.MustParse(req.MessageId), uuid.MustParse(req.UserId))
+	if err != nil {
+		return &proto.ReadMessageResponse{Success: false}, err
+	}
+	if message == nil {
+		return &proto.ReadMessageResponse{Success: false}, nil
+	}
+
+	err = h.messageService.ReadMessage(ctx, message.ID, uuid.MustParse(req.UserId))
+	if err != nil {
+		return &proto.ReadMessageResponse{Success: false}, err
+	}
+
+	return &proto.ReadMessageResponse{Success: true}, nil
+}
+
+func (h *MessageHandler) GetMessage(ctx context.Context, req *proto.GetMessageByIDRequest) (*proto.GetMessageByIDResponse, error) {
+	message, err := h.messageService.GetMessageByID(ctx, uuid.MustParse(req.MessageId), uuid.MustParse(req.UserId))
+	if err != nil {
+		return &proto.GetMessageByIDResponse{Status: 1}, err
+	}
+	if message == nil {
+		return &proto.GetMessageByIDResponse{Status: 1}, nil
+	}
+
+	protoMessage := &proto.Message{
+		Id:        message.ID.String(),
+		Content:   message.Content,
+		ChatId:    message.ChatID.String(),
+		SenderId:  message.SenderID.String(),
+		CreatedAt: message.CreatedAt.String(),
+		// Add other fields as necessary
+	}
+	return &proto.GetMessageByIDResponse{Status: 0, Message: protoMessage}, nil
+}

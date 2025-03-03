@@ -19,13 +19,13 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	MessagingService_SendMessage_FullMethodName            = "/message_service.MessagingService/SendMessage"
-	MessagingService_EditMessage_FullMethodName            = "/message_service.MessagingService/EditMessage"
-	MessagingService_DeleteMessage_FullMethodName          = "/message_service.MessagingService/DeleteMessage"
-	MessagingService_AddReaction_FullMethodName            = "/message_service.MessagingService/AddReaction"
-	MessagingService_RemoveReaction_FullMethodName         = "/message_service.MessagingService/RemoveReaction"
-	MessagingService_RetrieveNewMessages_FullMethodName    = "/message_service.MessagingService/RetrieveNewMessages"
-	MessagingService_RetrieveAllNewMessages_FullMethodName = "/message_service.MessagingService/RetrieveAllNewMessages"
+	MessagingService_SendMessage_FullMethodName    = "/message_service.MessagingService/SendMessage"
+	MessagingService_EditMessage_FullMethodName    = "/message_service.MessagingService/EditMessage"
+	MessagingService_DeleteMessage_FullMethodName  = "/message_service.MessagingService/DeleteMessage"
+	MessagingService_GetMessageByID_FullMethodName = "/message_service.MessagingService/GetMessageByID"
+	MessagingService_AddReaction_FullMethodName    = "/message_service.MessagingService/AddReaction"
+	MessagingService_RemoveReaction_FullMethodName = "/message_service.MessagingService/RemoveReaction"
+	MessagingService_ReadMessage_FullMethodName    = "/message_service.MessagingService/ReadMessage"
 )
 
 // MessagingServiceClient is the client API for MessagingService service.
@@ -40,14 +40,14 @@ type MessagingServiceClient interface {
 	EditMessage(ctx context.Context, in *EditMessageRequest, opts ...grpc.CallOption) (*EditMessageResponse, error)
 	// Deletes a message.
 	DeleteMessage(ctx context.Context, in *DeleteMessageRequest, opts ...grpc.CallOption) (*DeleteMessageResponse, error)
+	// Gets a message by ID.
+	GetMessageByID(ctx context.Context, in *GetMessageByIDRequest, opts ...grpc.CallOption) (*GetMessageByIDResponse, error)
 	// Adds an emoji reaction to a message.
 	AddReaction(ctx context.Context, in *AddReactionRequest, opts ...grpc.CallOption) (*AddReactionResponse, error)
 	// Removes an emoji reaction from a message.
 	RemoveReaction(ctx context.Context, in *RemoveReactionRequest, opts ...grpc.CallOption) (*RemoveReactionResponse, error)
-	// Retrieves new messages for a specific chat.
-	RetrieveNewMessages(ctx context.Context, in *RetrieveNewMessagesRequest, opts ...grpc.CallOption) (*RetrieveNewMessagesResponse, error)
-	// Retrieves new messages across all chats for a given user.
-	RetrieveAllNewMessages(ctx context.Context, in *RetrieveAllNewMessagesRequest, opts ...grpc.CallOption) (*RetrieveAllNewMessagesResponse, error)
+	// Retrieves new messages for a chat.
+	ReadMessage(ctx context.Context, in *ReadMessageRequest, opts ...grpc.CallOption) (*ReadMessageResponse, error)
 }
 
 type messagingServiceClient struct {
@@ -88,6 +88,16 @@ func (c *messagingServiceClient) DeleteMessage(ctx context.Context, in *DeleteMe
 	return out, nil
 }
 
+func (c *messagingServiceClient) GetMessageByID(ctx context.Context, in *GetMessageByIDRequest, opts ...grpc.CallOption) (*GetMessageByIDResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetMessageByIDResponse)
+	err := c.cc.Invoke(ctx, MessagingService_GetMessageByID_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *messagingServiceClient) AddReaction(ctx context.Context, in *AddReactionRequest, opts ...grpc.CallOption) (*AddReactionResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AddReactionResponse)
@@ -108,20 +118,10 @@ func (c *messagingServiceClient) RemoveReaction(ctx context.Context, in *RemoveR
 	return out, nil
 }
 
-func (c *messagingServiceClient) RetrieveNewMessages(ctx context.Context, in *RetrieveNewMessagesRequest, opts ...grpc.CallOption) (*RetrieveNewMessagesResponse, error) {
+func (c *messagingServiceClient) ReadMessage(ctx context.Context, in *ReadMessageRequest, opts ...grpc.CallOption) (*ReadMessageResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(RetrieveNewMessagesResponse)
-	err := c.cc.Invoke(ctx, MessagingService_RetrieveNewMessages_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *messagingServiceClient) RetrieveAllNewMessages(ctx context.Context, in *RetrieveAllNewMessagesRequest, opts ...grpc.CallOption) (*RetrieveAllNewMessagesResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(RetrieveAllNewMessagesResponse)
-	err := c.cc.Invoke(ctx, MessagingService_RetrieveAllNewMessages_FullMethodName, in, out, cOpts...)
+	out := new(ReadMessageResponse)
+	err := c.cc.Invoke(ctx, MessagingService_ReadMessage_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -140,14 +140,14 @@ type MessagingServiceServer interface {
 	EditMessage(context.Context, *EditMessageRequest) (*EditMessageResponse, error)
 	// Deletes a message.
 	DeleteMessage(context.Context, *DeleteMessageRequest) (*DeleteMessageResponse, error)
+	// Gets a message by ID.
+	GetMessageByID(context.Context, *GetMessageByIDRequest) (*GetMessageByIDResponse, error)
 	// Adds an emoji reaction to a message.
 	AddReaction(context.Context, *AddReactionRequest) (*AddReactionResponse, error)
 	// Removes an emoji reaction from a message.
 	RemoveReaction(context.Context, *RemoveReactionRequest) (*RemoveReactionResponse, error)
-	// Retrieves new messages for a specific chat.
-	RetrieveNewMessages(context.Context, *RetrieveNewMessagesRequest) (*RetrieveNewMessagesResponse, error)
-	// Retrieves new messages across all chats for a given user.
-	RetrieveAllNewMessages(context.Context, *RetrieveAllNewMessagesRequest) (*RetrieveAllNewMessagesResponse, error)
+	// Retrieves new messages for a chat.
+	ReadMessage(context.Context, *ReadMessageRequest) (*ReadMessageResponse, error)
 	mustEmbedUnimplementedMessagingServiceServer()
 }
 
@@ -167,17 +167,17 @@ func (UnimplementedMessagingServiceServer) EditMessage(context.Context, *EditMes
 func (UnimplementedMessagingServiceServer) DeleteMessage(context.Context, *DeleteMessageRequest) (*DeleteMessageResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteMessage not implemented")
 }
+func (UnimplementedMessagingServiceServer) GetMessageByID(context.Context, *GetMessageByIDRequest) (*GetMessageByIDResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetMessageByID not implemented")
+}
 func (UnimplementedMessagingServiceServer) AddReaction(context.Context, *AddReactionRequest) (*AddReactionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddReaction not implemented")
 }
 func (UnimplementedMessagingServiceServer) RemoveReaction(context.Context, *RemoveReactionRequest) (*RemoveReactionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveReaction not implemented")
 }
-func (UnimplementedMessagingServiceServer) RetrieveNewMessages(context.Context, *RetrieveNewMessagesRequest) (*RetrieveNewMessagesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RetrieveNewMessages not implemented")
-}
-func (UnimplementedMessagingServiceServer) RetrieveAllNewMessages(context.Context, *RetrieveAllNewMessagesRequest) (*RetrieveAllNewMessagesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RetrieveAllNewMessages not implemented")
+func (UnimplementedMessagingServiceServer) ReadMessage(context.Context, *ReadMessageRequest) (*ReadMessageResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReadMessage not implemented")
 }
 func (UnimplementedMessagingServiceServer) mustEmbedUnimplementedMessagingServiceServer() {}
 func (UnimplementedMessagingServiceServer) testEmbeddedByValue()                          {}
@@ -254,6 +254,24 @@ func _MessagingService_DeleteMessage_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MessagingService_GetMessageByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMessageByIDRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MessagingServiceServer).GetMessageByID(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MessagingService_GetMessageByID_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MessagingServiceServer).GetMessageByID(ctx, req.(*GetMessageByIDRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _MessagingService_AddReaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AddReactionRequest)
 	if err := dec(in); err != nil {
@@ -290,38 +308,20 @@ func _MessagingService_RemoveReaction_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MessagingService_RetrieveNewMessages_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RetrieveNewMessagesRequest)
+func _MessagingService_ReadMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReadMessageRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MessagingServiceServer).RetrieveNewMessages(ctx, in)
+		return srv.(MessagingServiceServer).ReadMessage(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: MessagingService_RetrieveNewMessages_FullMethodName,
+		FullMethod: MessagingService_ReadMessage_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MessagingServiceServer).RetrieveNewMessages(ctx, req.(*RetrieveNewMessagesRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MessagingService_RetrieveAllNewMessages_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RetrieveAllNewMessagesRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MessagingServiceServer).RetrieveAllNewMessages(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: MessagingService_RetrieveAllNewMessages_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MessagingServiceServer).RetrieveAllNewMessages(ctx, req.(*RetrieveAllNewMessagesRequest))
+		return srv.(MessagingServiceServer).ReadMessage(ctx, req.(*ReadMessageRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -346,6 +346,10 @@ var MessagingService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _MessagingService_DeleteMessage_Handler,
 		},
 		{
+			MethodName: "GetMessageByID",
+			Handler:    _MessagingService_GetMessageByID_Handler,
+		},
+		{
 			MethodName: "AddReaction",
 			Handler:    _MessagingService_AddReaction_Handler,
 		},
@@ -354,12 +358,8 @@ var MessagingService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _MessagingService_RemoveReaction_Handler,
 		},
 		{
-			MethodName: "RetrieveNewMessages",
-			Handler:    _MessagingService_RetrieveNewMessages_Handler,
-		},
-		{
-			MethodName: "RetrieveAllNewMessages",
-			Handler:    _MessagingService_RetrieveAllNewMessages_Handler,
+			MethodName: "ReadMessage",
+			Handler:    _MessagingService_ReadMessage_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

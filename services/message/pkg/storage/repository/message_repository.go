@@ -13,7 +13,6 @@ type MessageRepository interface {
 	DeleteMessage(ctx context.Context, messageID uuid.UUID) error
 	GetMessageByID(ctx context.Context, messageID uuid.UUID) (*models.Message, error)
 	GetMessagesByChatID(ctx context.Context, chatID uuid.UUID, limit, offset int) ([]*models.Message, error)
-	GetNewMessages(ctx context.Context, chatID uuid.UUID, since int64) ([]*models.Message, error)
 	GetAllChatsForUser(ctx context.Context, userID uuid.UUID) ([]uuid.UUID, error)
 	CreateChat(ctx context.Context, chat *models.Chat) (*models.Chat, error)
 	GetChatByID(ctx context.Context, chatID uuid.UUID) (*models.Chat, error)
@@ -26,4 +25,6 @@ type MessageRepository interface {
 	GetReactionsByMessageID(ctx context.Context, messageID uuid.UUID) ([]*models.Reaction, error)
 	ApplyReaction(ctx context.Context, reaction *models.Reaction) (*models.Reaction, error)
 	RemoveReaction(ctx context.Context, reactionID uuid.UUID) error
+	ReadMessage(ctx context.Context, messageID uuid.UUID, userID uuid.UUID) error
+	GetUnreadMessages(ctx context.Context, userID uuid.UUID) ([]uuid.UUID, error)
 }

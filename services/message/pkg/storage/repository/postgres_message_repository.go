@@ -99,35 +99,6 @@ func (r *PostgresRepositorySQL) GetMessagesByChatID(ctx context.Context, chatID 
 	return messages, nil
 }
 
-// GetNewMessages(ctx context.Context, chatID uuid.UUID, since int64) ([]*models.Message, error)
-
-func (r *PostgresRepositorySQL) GetNewMessages(ctx context.Context, chatID uuid.UUID, since int64) ([]*models.Message, error) {
-	if chatID == uuid.Nil {
-		return nil, errors.New("chat_id is required")
-	}
-	if since < 0 {
-		return nil, errors.New("since must be greater than 0")
-	}
-	rows, err := r.db.Query(ctx,
-		"SELECT message_id, chat_id, user_id, content, created_at, updated_at, is_deleted FROM messages WHERE chat_id = $1 AND created_at > $2 AND is_deleted = FALSE ORDER BY created_at DESC",
-		chatID, time.Unix(since, 0))
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	messages := make([]*models.Message, 0)
-	for rows.Next() {
-		message := &models.Message{}
-		err = rows.Scan(&message.ID, &message.ChatID, &message.SenderID, &message.Content, &message.CreatedAt, &message.UpdatedAt, &message.IsDeleted)
-		if err != nil {
-			return nil, err
-		}
-		messages = append(messages, message)
-	}
-
-	return messages, nil
-}
-
 // GetAllChatsForUser(ctx context.Context, userID uuid.UUID) ([]int64, error)
 
 func (r *PostgresRepositorySQL) GetAllChatsForUser(ctx context.Context, userID uuid.UUID) ([]uuid.UUID, error) {
@@ -364,4 +335,40 @@ func (r *PostgresRepositorySQL) RemoveReaction(ctx context.Context, reactionID u
 		return err
 	}
 	return nil
+}
+
+func (r *PostgresRepositorySQL) ReadMessage(ctx context.Context, messageID uuid.UUID, userID uuid.UUID) error {
+	if messageID == uuid.Nil || userID == uuid.Nil {
+		return errors.New("message_id and user_id are required")
+	}
+	_, err := r.db.Exec(ctx,
+		"INSERT INTO read_messages (message_id, user_id) VALUES ($1, $2)",
+		messageID, userID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *PostgresRepositorySQL) GetUnreadMessages(ctx context.Context, userID uuid.UUID) ([]uuid.UUID, error) {
+	if userID == uuid.Nil {
+		return nil, errors.New("user_id is required")
+	}
+	rows, err := r.db.Query(ctx,
+		"SELECT message_id FROM messages WHERE message_id NOT IN (SELECT message_id FROM read_messages WHERE user_id = $1 AND is_deleted = FALSE) AND is_deleted = FALSE",
+		userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	messageIDs := make([]uuid.UUID, 0)
+	for rows.Next() {
+		var messageID uuid.UUID
+		err = rows.Scan(&messageID)
+		if err != nil {
+			return nil, err
+		}
+		messageIDs = append(messageIDs, messageID)
+	}
+	return messageIDs, nil
 }

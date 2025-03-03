@@ -147,26 +147,40 @@ func (s *MessageService) GetMessagesByChatID(ctx context.Context, chatID uuid.UU
 	return nil, errors.New("chat not found")
 }
 
-func (s *MessageService) GetNewMessages(ctx context.Context, chatID uuid.UUID, since int64, userID uuid.UUID) ([]*models.Message, error) {
+func (s *MessageService) ReadMessage(ctx context.Context, messageID uuid.UUID, userID uuid.UUID) error {
+	if messageID == uuid.Nil {
+		return errors.New("message_id is required")
+	}
+
 	// security mesaures
-	// get chat by chat ID, get chat members by chat ID, check if user is in chat members
-	chat, err := s.messageRepo.GetChatByID(ctx, chatID)
+	// get message by message ID, get chat by message ID, get chat members by chat ID, check if user is in chat members
+	message, err := s.GetMessageByID(ctx, messageID, userID)
 	if err != nil {
-		return nil, err
+		return errors.New("message not found")
+	}
+
+	chat, err := s.messageRepo.GetChatByMessageID(ctx, message.ID)
+	if err != nil {
+		return errors.New("chat not found")
 	}
 	chatMembers, err := s.messageRepo.GetChatMembers(ctx, chat.ID)
 	if err != nil {
-		return nil, err
+		return errors.New("chat not found")
 	}
 	if len(chatMembers) == 0 {
-		return nil, errors.New("chat not found")
+		return errors.New("chat not found")
 	}
 	for _, member := range chatMembers {
 		if member == userID {
-			return s.messageRepo.GetNewMessages(ctx, chatID, since)
+			return s.messageRepo.ReadMessage(ctx, messageID, userID)
 		}
 	}
-	return nil, errors.New("chat not found")
+	return errors.New("chat not found")
+}
+
+func (s *MessageService) GetUnreadMessages(ctx context.Context, userID uuid.UUID) ([]uuid.UUID, error) {
+	// security mesaures
+	return s.messageRepo.GetUnreadMessages(ctx, userID)
 }
 
 func (s *MessageService) DeleteAllMessagesInChat(ctx context.Context, chatID uuid.UUID, userID uuid.UUID) error {
