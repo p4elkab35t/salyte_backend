@@ -1,10 +1,11 @@
 package handlers
 
 import (
-	"context"
+	// "context"
 	"encoding/json"
 	"net/http"
-	"strings"
+
+	// "strings"
 
 	"github.com/p4elkab35t/salyte_backend/services/social/pkg/logic"
 )
@@ -19,11 +20,11 @@ func NewFollowHandler(followLogic *logic.FollowService) *FollowHandler {
 
 // FollowProfile handles POST requests to follow a profile.
 func (h *FollowHandler) FollowProfile(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Background()
-	profileID := strings.TrimPrefix(r.URL.Path, "/social/follow/")
+	ctx := r.Context()
+	profileID := r.URL.Query().Get("profileID")
 
 	// Extract user ID from the request (e.g., from a JWT token or session)
-	userID := r.Header.Get("User-ID")
+	userID := ctx.Value("ProfileID").(string)
 	if userID == "" {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusUnauthorized)
@@ -45,11 +46,11 @@ func (h *FollowHandler) FollowProfile(w http.ResponseWriter, r *http.Request) {
 
 // UnfollowProfile handles DELETE requests to unfollow a profile.
 func (h *FollowHandler) UnfollowProfile(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Background()
-	profileID := strings.TrimPrefix(r.URL.Path, "/social/follow/")
+	ctx := r.Context()
+	profileID := r.URL.Query().Get("profileID")
 
 	// Extract user ID from the request (e.g., from a JWT token or session)
-	userID := r.Header.Get("User-ID")
+	userID := ctx.Value("ProfileID").(string)
 	if userID == "" {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusUnauthorized)
@@ -71,8 +72,8 @@ func (h *FollowHandler) UnfollowProfile(w http.ResponseWriter, r *http.Request) 
 
 // GetFollowers handles GET requests to retrieve a profile's followers.
 func (h *FollowHandler) GetFollowers(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Background()
-	profileID := strings.TrimPrefix(r.URL.Path, "/social/followers/")
+	ctx := r.Context()
+	profileID := r.URL.Query().Get("profileID")
 
 	followers, err := h.followLogic.GetProfileFollowers(ctx, profileID)
 	if err != nil {
@@ -89,8 +90,8 @@ func (h *FollowHandler) GetFollowers(w http.ResponseWriter, r *http.Request) {
 
 // GetFollowing handles GET requests to retrieve profiles a user is following.
 func (h *FollowHandler) GetFollowing(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Background()
-	profileID := strings.TrimPrefix(r.URL.Path, "/social/following/")
+	ctx := r.Context()
+	profileID := r.URL.Query().Get("profileID")
 
 	following, err := h.followLogic.GetProfileFollowing(ctx, profileID)
 	if err != nil {
@@ -107,8 +108,8 @@ func (h *FollowHandler) GetFollowing(w http.ResponseWriter, r *http.Request) {
 
 // GetFriends handles GET requests to retrieve a profile's friends.
 func (h *FollowHandler) GetFriends(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Background()
-	profileID := strings.TrimPrefix(r.URL.Path, "/social/friends/")
+	ctx := r.Context()
+	profileID := r.URL.Query().Get("profileID")
 
 	friends, err := h.followLogic.GetFriends(ctx, profileID)
 	if err != nil {
@@ -125,8 +126,8 @@ func (h *FollowHandler) GetFriends(w http.ResponseWriter, r *http.Request) {
 
 // GetFriendRequests handles GET requests to retrieve pending friend requests.
 func (h *FollowHandler) GetFriendRequests(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Background()
-	profileID := strings.TrimPrefix(r.URL.Path, "/social/friend-requests/")
+	ctx := r.Context()
+	profileID := r.URL.Query().Get("profileID")
 
 	requests, err := h.followLogic.GetFriendsRequests(ctx, profileID)
 	if err != nil {
@@ -144,11 +145,11 @@ func (h *FollowHandler) GetFriendRequests(w http.ResponseWriter, r *http.Request
 // make friend and unfriends handlers
 
 func (h *FollowHandler) MakeFriend(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Background()
-	profileID := strings.TrimPrefix(r.URL.Path, "/social/friend/")
+	ctx := r.Context()
+	profileID := r.URL.Query().Get("profileID")
 
 	// Extract user ID from the request (e.g., from a JWT token or session)
-	userID := r.Header.Get("User-ID")
+	userID := ctx.Value("ProfileID").(string)
 	if userID == "" {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusUnauthorized)
@@ -169,11 +170,12 @@ func (h *FollowHandler) MakeFriend(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *FollowHandler) Unfriend(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Background()
-	profileID := strings.TrimPrefix(r.URL.Path, "/social/friend/")
+	ctx := r.Context()
+	profileID := r.URL.Query().Get("profileID")
 
 	// Extract user ID from the request (e.g., from a JWT token or session)
-	userID := r.Header.Get("User-ID")
+
+	userID := ctx.Value("ProfileID").(string)
 	if userID == "" {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusUnauthorized)

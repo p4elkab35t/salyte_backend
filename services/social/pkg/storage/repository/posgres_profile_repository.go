@@ -16,11 +16,11 @@ func NewPostgresProfileRepositorySQL(db *pgxpool.Pool) ProfileRepository {
 
 func (r *PostgresRepositorySQL) CreateProfile(ctx context.Context, profile *models.Profile) (*models.Profile, error) {
 	query := `
-		INSERT INTO Profile (user_id, username, bio, profile_picture_url, visibility)
-		VALUES ($1, $2, $3, $4, $5)
+		INSERT INTO Profile (user_id, username, bio, profile_picture_url)
+		VALUES ($1, $2, $3, $4)
 		RETURNING profile_id, created_at, updated_at
 	`
-	err := r.db.QueryRow(ctx, query, profile.UserID, profile.Username, profile.Bio, profile.ProfilePictureURL, profile.Visibility).
+	err := r.db.QueryRow(ctx, query, profile.UserID, profile.Username, profile.Bio, profile.ProfilePictureURL).
 		Scan(&profile.ProfileID, &profile.CreatedAt, &profile.UpdatedAt)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create profile: %w", err)
@@ -147,7 +147,7 @@ func (r *PostgresRepositorySQL) UpdateSettings(ctx context.Context, settings *mo
 	return nil
 }
 
-func NewPostgresFollowerRepositorySQL(db *pgxpool.Pool) FollowRepository {
+func NewPostgresFollowRepositorySQL(db *pgxpool.Pool) FollowRepository {
 	return &PostgresRepositorySQL{db: db}
 }
 

@@ -4,6 +4,7 @@ import Bun from "bun"
 import secureServiceHandler from "./router/secure/secure.router";
 import { CONFIG } from "./config/config";
 import { Logger } from "./logger/logger";
+import socialServiceHandler from "./router/social/social.handler";
 
 // console.log(import.meta.dir);
 
@@ -11,7 +12,7 @@ const services = new Map<string, Function>([
     ["/status", apiStatusHandler],
     ["/secure", secureServiceHandler],
     // ["/message", messageHandler],
-    // ["/social", socialHandler],
+    ["/social", socialServiceHandler],
 ])
 
 const server = Bun.serve({

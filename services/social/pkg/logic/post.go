@@ -18,8 +18,9 @@ func NewPostService(postRepo repository.PostRepository) *PostService {
 
 // CreatePost creates a new post.
 func (s *PostService) CreatePost(ctx context.Context, post *models.Post) (*models.Post, error) {
-	post.CreatedAt = time.Now()
-	post.UpdatedAt = time.Now()
+	newTime := time.Now()
+	post.CreatedAt = &newTime
+	post.UpdatedAt = &newTime
 	return s.postRepo.CreatePost(ctx, post)
 }
 
@@ -35,7 +36,8 @@ func (s *PostService) GetAllPosts(ctx context.Context) ([]*models.Post, error) {
 
 // UpdatePost updates an existing post.
 func (s *PostService) UpdatePost(ctx context.Context, post *models.Post) error {
-	post.UpdatedAt = time.Now()
+	newTime := time.Now()
+	post.UpdatedAt = &newTime
 	return s.postRepo.UpdatePost(ctx, post)
 }
 

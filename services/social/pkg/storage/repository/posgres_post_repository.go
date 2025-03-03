@@ -24,6 +24,7 @@ func NewPostgresCommentRepositorySQL(db *pgxpool.Pool) CommentRepository {
 }
 
 func (r *PostgresRepositorySQL) CreatePost(ctx context.Context, post *models.Post) (*models.Post, error) {
+	fmt.Println(post.ProfileID)
 	query := `
 		INSERT INTO Posts (profile_id, community_id, content, media_url, visibility)
 		VALUES ($1, $2, $3, $4, $5)

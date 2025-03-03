@@ -100,7 +100,6 @@ const routes = new Map<string, { method: string[], handler: Function }>([
     try{
     const body = await req.json();
     const result = await promisifyCallback(authClient.SignUp,{ email: body.email, password: body.password });
-    console.log(result)
     if (result.status !== 0){
       return new Response(JSON.stringify({ error: "Sign up failed" }), { status: 401 });
     }
@@ -140,3 +139,4 @@ const routes = new Map<string, { method: string[], handler: Function }>([
       });
     });
   }
+

@@ -10,11 +10,11 @@ type Profile struct {
 	ProfileID         uuid.UUID `gorm:"primaryKey;type:uuid;default:uuid_generate_v4()"`
 	UserID            uuid.UUID `gorm:"type:uuid"`
 	Username          string    `gorm:"type:varchar(255)"`
-	Bio               string    `gorm:"type:text"`
-	ProfilePictureURL string    `gorm:"type:varchar(255)"`
-	Visibility        string    `gorm:"type:varchar(50)"`
-	CreatedAt         time.Time
-	UpdatedAt         time.Time
+	Bio               *string   `gorm:"type:text"`
+	ProfilePictureURL *string   `gorm:"type:varchar(255)"`
+	Visibility        *string   `gorm:"type:varchar(50)"`
+	CreatedAt         *time.Time
+	UpdatedAt         *time.Time
 }
 
 type Follower struct {

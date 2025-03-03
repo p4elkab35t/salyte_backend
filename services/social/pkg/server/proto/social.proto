@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package social;
+
+option go_package = "github.com/p4elkab35t/salyte_backend/services/social/pkg/proto/social";
+
+service SocialService {
+  rpc CreateUserProfile(CreateUserProfileRequest) returns (CreateUserProfileResponse);
+  rpc UpdateOnlineStatus(UpdateOnlineStatusRequest) returns (UpdateOnlineStatusResponse);
+}
+
+message CreateUserProfileRequest {
+  string user_id = 1;
+  string email = 2;
+}
+
+message CreateUserProfileResponse {
+  string profile_id = 1;
+  string message = 2;
+  int32  status = 3;
+}
+
+message UpdateOnlineStatusRequest {
+  string profile_id = 1;
+  bool   is_online = 2;
+}
+
+message UpdateOnlineStatusResponse {
+  string message = 1;
+  int32  status = 2;
+}
+
+

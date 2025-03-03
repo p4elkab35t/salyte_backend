@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
-	"strings"
 
 	"github.com/google/uuid"
 	"github.com/p4elkab35t/salyte_backend/services/social/pkg/logic"
@@ -22,7 +21,7 @@ func NewCommunityHandler(communityLogic *logic.CommunityService) *CommunityHandl
 // GetCommunity handles GET requests to retrieve a community.
 func (h *CommunityHandler) GetCommunity(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
-	communityID := strings.TrimPrefix(r.URL.Path, "/social/community/")
+	communityID := r.URL.Query().Get("communityID")
 
 	community, err := h.communityLogic.GetCommunityByID(ctx, communityID)
 	if err != nil {
@@ -65,7 +64,7 @@ func (h *CommunityHandler) CreateCommunity(w http.ResponseWriter, r *http.Reques
 // UpdateCommunity handles PUT requests to update a community.
 func (h *CommunityHandler) UpdateCommunity(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
-	communityID := strings.TrimPrefix(r.URL.Path, "/social/community/")
+	communityID := r.URL.Query().Get("communityID")
 
 	var community models.Community
 	if err := json.NewDecoder(r.Body).Decode(&community); err != nil {
@@ -91,7 +90,7 @@ func (h *CommunityHandler) UpdateCommunity(w http.ResponseWriter, r *http.Reques
 // GetCommunityMembers handles GET requests to retrieve community members.
 func (h *CommunityHandler) GetCommunityMembers(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
-	communityID := strings.TrimPrefix(r.URL.Path, "/social/community/")
+	communityID := r.URL.Query().Get("communityID")
 
 	members, err := h.communityLogic.GetCommunityFollowers(ctx, communityID)
 	if err != nil {

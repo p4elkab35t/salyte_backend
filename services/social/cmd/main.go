@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gorilla/mux"
 	"github.com/p4elkab35t/salyte_backend/services/social/config"
 	"github.com/p4elkab35t/salyte_backend/services/social/pkg/logic"
 	"github.com/p4elkab35t/salyte_backend/services/social/pkg/server/handlers"
@@ -17,6 +18,8 @@ func main() {
 	var cfg config.Config
 	config.LoadConfig(&cfg)
 	ctx := context.Background()
+
+	r := mux.NewRouter()
 
 	pgConfig := cfg.Database.Postgres
 	dbConnStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
@@ -36,11 +39,12 @@ func main() {
 
 	// Load repositories
 	profileRepo := repository.NewPostgresProfileRepositorySQL(db.GetDB())
-	followRepo := repository.NewPostgresFollowRepositorySQL(db.GetDB())
 	communityRepo := repository.NewPostgresCommunityRepositorySQL(db.GetDB())
 	postRepo := repository.NewPostgresPostRepositorySQL(db.GetDB())
 	commentRepo := repository.NewPostgresCommentRepositorySQL(db.GetDB())
 	interactionRepo := repository.NewPostgresInteractionRepositorySQL(db.GetDB())
+
+	followRepo := repository.NewPostgresFollowRepositorySQL(db.GetDB())
 
 	// Load services
 	profileService := logic.NewProfileService(profileRepo)
@@ -58,51 +62,91 @@ func main() {
 	followHandler := handlers.NewFollowHandler(followService)
 	commentHandler := handlers.NewCommentHandler(commentService)
 
+	// Middleware to inject user profile into request context
+
+	profileMiddleware := InjectProfileMiddleware(profileService)
+
+	// Group protected routes under middleware
+	protectedRoutes := r.PathPrefix("/social").Subrouter()
+	protectedRoutes.Use(profileMiddleware)
+
 	// Enable routes
 
+	r.HandleFunc("/social", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("Welcome to the social service"))
+	})
+
 	// Profile routes
-	http.HandleFunc("/social/profile", profileHandler.GetProfile)
-	http.HandleFunc("/social/profile/{userID}", profileHandler.UpdateProfile)
-	http.HandleFunc("/social/profile/{userID}/settings", profileHandler.GetProfileSettings)
-	http.HandleFunc("/social/profile/{userID}/settings", profileHandler.UpdateProfileSettings)
+	protectedRoutes.HandleFunc("/profile", profileHandler.CreateProfile).Methods("POST")
+	protectedRoutes.HandleFunc("/profile", profileHandler.GetProfile).Methods("GET")
+	protectedRoutes.HandleFunc("/profile/update", profileHandler.UpdateProfile).Methods("PUT")
+	protectedRoutes.HandleFunc("/profile/settings", profileHandler.GetProfileSettings).Methods("GET")
+	protectedRoutes.HandleFunc("/profile/settings/update", profileHandler.UpdateProfileSettings).Methods("PUT")
 
 	// Follow routes
 
-	http.HandleFunc("/social/follow", followHandler.FollowProfile)
-	http.HandleFunc("/social/unfollow", followHandler.UnfollowProfile)
-	http.HandleFunc("/social/following/{userID}", followHandler.GetFollowing)
-	http.HandleFunc("/social/followers/{userID}", followHandler.GetFollowers)
-	http.HandleFunc("/social/friends/{userID}", followHandler.GetFriends)
-	http.HandleFunc("/social/friends/{userID}/add", followHandler.MakeFriend)
-	http.HandleFunc("/social/friends/{userID}/remove", followHandler.Unfriend)
+	protectedRoutes.HandleFunc("/follow", followHandler.FollowProfile).Methods("POST")
+	protectedRoutes.HandleFunc("/unfollow", followHandler.UnfollowProfile).Methods("DELETE")
+	protectedRoutes.HandleFunc("/following", followHandler.GetFollowing).Methods("GET")
+	protectedRoutes.HandleFunc("/followers", followHandler.GetFollowers).Methods("GET")
+	protectedRoutes.HandleFunc("/friends", followHandler.GetFriends).Methods("GET")
+	protectedRoutes.HandleFunc("/friends/add", followHandler.MakeFriend).Methods("POST")
+	protectedRoutes.HandleFunc("/friends/remove", followHandler.Unfriend).Methods("POST")
 
 	// Community routes
-	http.HandleFunc("/social/community", communityHandler.CreateCommunity)
-	http.HandleFunc("/social/community/", communityHandler.GetCommunity)
-	http.HandleFunc("/social/community/{communityID}", communityHandler.UpdateCommunity)
-	http.HandleFunc("/social/community/{communityID}/members", communityHandler.GetCommunityMembers)
+	protectedRoutes.HandleFunc("/community", communityHandler.CreateCommunity).Methods("POST")
+	protectedRoutes.HandleFunc("/community", communityHandler.GetCommunity).Methods("GET")
+	protectedRoutes.HandleFunc("/community/update", communityHandler.UpdateCommunity).Methods("PUT")
+	protectedRoutes.HandleFunc("/community/members", communityHandler.GetCommunityMembers).Methods("GET")
 
 	// Post routes
-	http.HandleFunc("/social/post", postHandler.CreatePost)
-	http.HandleFunc("/social/post/", postHandler.GetPost)
-	http.HandleFunc("/social/post/{postID}", postHandler.UpdatePost)
-	http.HandleFunc("/social/post/{postID}", postHandler.DeletePost)
-	http.HandleFunc("/social/post/community/{communityID}", postHandler.GetPostsByCommunity)
-	http.HandleFunc("/social/post/user/{userID}", postHandler.GetPostsByUser)
+	protectedRoutes.HandleFunc("/post", postHandler.CreatePost).Methods("POST")
+	protectedRoutes.HandleFunc("/post", postHandler.GetPost).Methods("GET")
+	protectedRoutes.HandleFunc("/post/update", postHandler.UpdatePost).Methods("PUT")
+	protectedRoutes.HandleFunc("/post/delete", postHandler.DeletePost).Methods("DELETE")
+	protectedRoutes.HandleFunc("/post/community", postHandler.GetPostsByCommunity).Methods("GET")
+	protectedRoutes.HandleFunc("/post/user", postHandler.GetPostsByUser).Methods("GET")
 
 	// Comment routes
-	http.HandleFunc("/social/post/{postID}/comment", commentHandler.CreateComment)
-	http.HandleFunc("/social/post/{postID}/comment/{commentID}", commentHandler.UpdateComment)
-	http.HandleFunc("/social/post/{postID}/comment/{commentID}", commentHandler.DeleteComment)
-	http.HandleFunc("/social/post/{postID}/comments", commentHandler.GetCommentsByPostID)
+	protectedRoutes.HandleFunc("/post/comment", commentHandler.CreateComment).Methods("POST")
+	protectedRoutes.HandleFunc("/post/comment/update", commentHandler.UpdateComment).Methods("PUT")
+	protectedRoutes.HandleFunc("/post/comment/delete", commentHandler.DeleteComment).Methods("DELETE")
+	protectedRoutes.HandleFunc("/post/comments", commentHandler.GetCommentsByPostID).Methods("GET")
 
 	// Interaction routes
-	http.HandleFunc("/social/post/{postID}/comments", interactionHandler.GetPostComments)
-	http.HandleFunc("/social/post/{postID}/likes", interactionHandler.GetPostLikes)
-	http.HandleFunc("/social/post/{postID}/like", interactionHandler.LikePost)
-	http.HandleFunc("/social/post/{postID}/unlike", interactionHandler.UnlikePost)
+	// r.HandleFunc("/post/comments", interactionHandler.GetPostComments).Methods("GET")
+	protectedRoutes.HandleFunc("/post/likes", interactionHandler.GetPostLikes).Methods("GET")
+	protectedRoutes.HandleFunc("/post/like", interactionHandler.LikePost).Methods("POST")
+	protectedRoutes.HandleFunc("/post/unlike", interactionHandler.UnlikePost).Methods("DELETE")
 
 	// Start the HTTP server
-	log.Println("Server is running on port 8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Println("Server is running on port 8081")
+	log.Fatal(http.ListenAndServe(":8081", r))
+
+}
+
+// Middleware to inject user profile into request context
+func InjectProfileMiddleware(profileService *logic.ProfileService) mux.MiddlewareFunc {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			userID := r.URL.Query().Get("userID") // Example: Get from header (modify as needed)
+
+			if userID == "" {
+				http.Error(w, `{"error": "missing user ID"}`, http.StatusUnauthorized)
+				return
+			}
+
+			// Fetch profile from database
+			profile, err := profileService.GetProfileByUserID(r.Context(), userID)
+			if err != nil {
+				http.Error(w, `{"error": "profile not found"}`, http.StatusNotFound)
+				return
+			}
+
+			// Store profile in request context
+			ctx := context.WithValue(r.Context(), "profileID", profile.ProfileID)
+			next.ServeHTTP(w, r.WithContext(ctx))
+		})
+	}
 }

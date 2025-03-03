@@ -18,8 +18,9 @@ func NewCommentService(commentRepo repository.CommentRepository) *CommentService
 
 // CreateComment creates a new comment.
 func (s *CommentService) CreateComment(ctx context.Context, comment *models.Comment) (*models.Comment, error) {
-	comment.CreatedAt = time.Now()
-	comment.UpdatedAt = time.Now()
+	newTime := time.Now()
+	comment.CreatedAt = &newTime
+	comment.UpdatedAt = &newTime
 	return s.commentRepo.CreateComment(ctx, comment)
 }
 
@@ -35,7 +36,8 @@ func (s *CommentService) GetAllComments(ctx context.Context) ([]*models.Comment,
 
 // UpdateComment updates an existing comment.
 func (s *CommentService) UpdateComment(ctx context.Context, comment *models.Comment) error {
-	comment.UpdatedAt = time.Now()
+	newTime := time.Now()
+	comment.UpdatedAt = &newTime
 	return s.commentRepo.UpdateComment(ctx, comment)
 }
 

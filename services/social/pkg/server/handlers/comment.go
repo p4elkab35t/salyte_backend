@@ -1,10 +1,11 @@
 package handlers
 
 import (
-	"context"
+	// "context"
 	"encoding/json"
 	"net/http"
-	"strings"
+
+	// "strings"
 
 	"github.com/google/uuid"
 	"github.com/p4elkab35t/salyte_backend/services/social/pkg/logic"
@@ -21,8 +22,7 @@ func NewCommentHandler(commentLogic *logic.CommentService) *CommentHandler {
 
 // CreateComment handles POST requests to create a new comment.
 func (h *CommentHandler) CreateComment(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Background()
-
+	ctx := r.Context()
 	var comment models.Comment
 	if err := json.NewDecoder(r.Body).Decode(&comment); err != nil {
 		w.Header().Set("Content-Type", "application/json")
@@ -30,6 +30,8 @@ func (h *CommentHandler) CreateComment(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(map[string]string{"error": "invalid request body"})
 		return
 	}
+
+	comment.ProfileID = uuid.MustParse(ctx.Value("profileID").(string))
 
 	createdComment, err := h.commentLogic.CreateComment(ctx, &comment)
 	if err != nil {
@@ -46,8 +48,8 @@ func (h *CommentHandler) CreateComment(w http.ResponseWriter, r *http.Request) {
 
 // GetCommentByID handles GET requests to retrieve a comment by its ID.
 func (h *CommentHandler) GetCommentByID(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Background()
-	commentID := strings.TrimPrefix(r.URL.Path, "/social/comment/")
+	ctx := r.Context()
+	commentID := r.URL.Query().Get("commentID")
 
 	comment, err := h.commentLogic.GetCommentByID(ctx, commentID)
 	if err != nil {
@@ -64,8 +66,8 @@ func (h *CommentHandler) GetCommentByID(w http.ResponseWriter, r *http.Request) 
 
 // UpdateComment handles PUT requests to update a comment.
 func (h *CommentHandler) UpdateComment(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Background()
-	commentID := strings.TrimPrefix(r.URL.Path, "/social/comment/")
+	ctx := r.Context()
+	commentID := r.URL.Query().Get("commentID")
 
 	var comment models.Comment
 	if err := json.NewDecoder(r.Body).Decode(&comment); err != nil {
@@ -74,6 +76,8 @@ func (h *CommentHandler) UpdateComment(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(map[string]string{"error": "invalid request body"})
 		return
 	}
+
+	comment.ProfileID = uuid.MustParse(ctx.Value("profileID").(string))
 
 	comment.CommentID = uuid.MustParse(commentID)
 	if err := h.commentLogic.UpdateComment(ctx, &comment); err != nil {
@@ -90,8 +94,8 @@ func (h *CommentHandler) UpdateComment(w http.ResponseWriter, r *http.Request) {
 
 // DeleteComment handles DELETE requests to delete a comment.
 func (h *CommentHandler) DeleteComment(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Background()
-	commentID := strings.TrimPrefix(r.URL.Path, "/social/comment/")
+	ctx := r.Context()
+	commentID := r.URL.Query().Get("commentID")
 
 	if err := h.commentLogic.DeleteComment(ctx, commentID); err != nil {
 		w.Header().Set("Content-Type", "application/json")
@@ -107,8 +111,8 @@ func (h *CommentHandler) DeleteComment(w http.ResponseWriter, r *http.Request) {
 
 // GetCommentsByPostID handles GET requests to retrieve comments for a specific post.
 func (h *CommentHandler) GetCommentsByPostID(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Background()
-	postID := strings.TrimPrefix(r.URL.Path, "/social/post/")
+	ctx := r.Context()
+	postID := r.URL.Query().Get("postID")
 
 	comments, err := h.commentLogic.GetCommentsByPostID(ctx, postID)
 	if err != nil {

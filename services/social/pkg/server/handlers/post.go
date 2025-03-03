@@ -1,10 +1,9 @@
 package handlers
 
 import (
-	"context"
+	// "context"
 	"encoding/json"
 	"net/http"
-	"strings"
 
 	"github.com/google/uuid"
 	"github.com/p4elkab35t/salyte_backend/services/social/pkg/logic"
@@ -21,8 +20,22 @@ func NewPostHandler(postLogic *logic.PostService) *PostHandler {
 
 // GetPost handles GET requests to retrieve a post.
 func (h *PostHandler) GetPost(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Background()
-	postID := strings.TrimPrefix(r.URL.Path, "/social/post/")
+	ctx := r.Context()
+	postID := r.URL.Query().Get("postID")
+
+	if postID == "" {
+		posts, err := h.postLogic.GetAllPosts(ctx)
+		if err != nil {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(posts)
+		return
+	}
 
 	post, err := h.postLogic.GetPostByID(ctx, postID)
 	if err != nil {
@@ -39,7 +52,7 @@ func (h *PostHandler) GetPost(w http.ResponseWriter, r *http.Request) {
 
 // CreatePost handles POST requests to create a new post.
 func (h *PostHandler) CreatePost(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Background()
+	ctx := r.Context()
 
 	var post models.Post
 	if err := json.NewDecoder(r.Body).Decode(&post); err != nil {
@@ -48,6 +61,9 @@ func (h *PostHandler) CreatePost(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(map[string]string{"error": "invalid request body"})
 		return
 	}
+
+	profileID := uuid.MustParse(ctx.Value("profileID").(uuid.UUID).String())
+	post.ProfileID = &profileID
 
 	createdPost, err := h.postLogic.CreatePost(ctx, &post)
 	if err != nil {
@@ -64,8 +80,8 @@ func (h *PostHandler) CreatePost(w http.ResponseWriter, r *http.Request) {
 
 // UpdatePost handles PUT requests to update a post.
 func (h *PostHandler) UpdatePost(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Background()
-	postID := strings.TrimPrefix(r.URL.Path, "/social/post/")
+	ctx := r.Context()
+	postID := r.URL.Query().Get("postID")
 
 	var post models.Post
 	if err := json.NewDecoder(r.Body).Decode(&post); err != nil {
@@ -74,6 +90,9 @@ func (h *PostHandler) UpdatePost(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(map[string]string{"error": "invalid request body"})
 		return
 	}
+
+	profileID := uuid.MustParse(ctx.Value("profileID").(string))
+	post.ProfileID = &profileID
 
 	post.PostID = uuid.MustParse(postID)
 	if err := h.postLogic.UpdatePost(ctx, &post); err != nil {
@@ -90,8 +109,8 @@ func (h *PostHandler) UpdatePost(w http.ResponseWriter, r *http.Request) {
 
 // DeletePost handles DELETE requests to delete a post.
 func (h *PostHandler) DeletePost(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Background()
-	postID := strings.TrimPrefix(r.URL.Path, "/social/post/")
+	ctx := r.Context()
+	postID := r.URL.Query().Get("postID")
 
 	if err := h.postLogic.DeletePost(ctx, postID); err != nil {
 		w.Header().Set("Content-Type", "application/json")
@@ -107,8 +126,8 @@ func (h *PostHandler) DeletePost(w http.ResponseWriter, r *http.Request) {
 
 // GetPostsByCommunity handles GET requests to retrieve posts by community.
 func (h *PostHandler) GetPostsByCommunity(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Background()
-	communityID := strings.TrimPrefix(r.URL.Path, "/social/post/community/")
+	ctx := r.Context()
+	communityID := r.URL.Query().Get("communityID")
 
 	posts, err := h.postLogic.GetPostsByCommunityID(ctx, communityID)
 	if err != nil {
@@ -123,10 +142,9 @@ func (h *PostHandler) GetPostsByCommunity(w http.ResponseWriter, r *http.Request
 	json.NewEncoder(w).Encode(posts)
 }
 
-// GetPostsByUser handles GET requests to retrieve posts by user.
 func (h *PostHandler) GetPostsByUser(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Background()
-	userID := strings.TrimPrefix(r.URL.Path, "/social/post/user/")
+	ctx := r.Context()
+	userID := r.URL.Query().Get("profileID")
 
 	posts, err := h.postLogic.GetPostsByUserID(ctx, userID)
 	if err != nil {

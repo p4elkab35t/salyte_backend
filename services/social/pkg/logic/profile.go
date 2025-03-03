@@ -18,8 +18,9 @@ func NewProfileService(profileRepo repository.ProfileRepository) *ProfileService
 
 // CreateProfile creates a new profile.
 func (s *ProfileService) CreateProfile(ctx context.Context, profile *models.Profile) (*models.Profile, error) {
-	profile.CreatedAt = time.Now()
-	profile.UpdatedAt = time.Now()
+	now := time.Now()
+	profile.CreatedAt = &now
+	profile.UpdatedAt = &now
 	return s.profileRepo.CreateProfile(ctx, profile)
 }
 
@@ -40,7 +41,8 @@ func (s *ProfileService) GetAllProfiles(ctx context.Context) ([]*models.Profile,
 
 // UpdateProfile updates an existing profile.
 func (s *ProfileService) UpdateProfile(ctx context.Context, profile *models.Profile) error {
-	profile.UpdatedAt = time.Now()
+	now := time.Now()
+	profile.UpdatedAt = &now
 	return s.profileRepo.UpdateProfile(ctx, profile)
 }
 
@@ -56,6 +58,7 @@ func (s *ProfileService) GetSettings(ctx context.Context, profileID string) (*mo
 
 // UpdateSettings updates the settings for a profile.
 func (s *ProfileService) UpdateSettings(ctx context.Context, settings *models.Setting) error {
-	settings.UpdatedAt = time.Now()
+	now := time.Now()
+	settings.UpdatedAt = now
 	return s.profileRepo.UpdateSettings(ctx, settings)
 }

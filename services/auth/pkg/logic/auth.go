@@ -1,8 +1,13 @@
 package logic
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
+	"io"
+	"log"
+	"net/http"
 
 	// "os/user"
 	// "fmt"
@@ -54,6 +59,38 @@ func (s *AuthLogicService) SignUp(ctx context.Context, email, password string) (
 	if err != nil {
 		//s.Logger.CreateSecurityLog(ctx, user.User_id, "Initial user sign in fail")
 		return nil, err
+	}
+
+	profileData := map[string]string{
+		"userID": session.User_id,
+		"email":  user.Email, // Ensure JSON field names match
+	}
+
+	jsonData, err := json.Marshal(profileData)
+	if err != nil {
+		return nil, err
+	}
+
+	hookUrl := "http://localhost:8081/social/profile"
+	req, err := http.NewRequest("POST", hookUrl, bytes.NewBuffer(jsonData))
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	// Send request
+	client := &http.Client{Timeout: 5 * time.Second}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	// Check response status
+	if resp.StatusCode != http.StatusCreated {
+		bodyBytes, _ := io.ReadAll(resp.Body)
+		log.Printf("Profile service returned error: %s", string(bodyBytes))
+		return nil, errors.New("failed to create profile")
 	}
 
 	s.Logger.CreateSecurityLog(ctx, session.User_id, "User created")

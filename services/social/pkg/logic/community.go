@@ -18,8 +18,9 @@ func NewCommunityService(communityRepo repository.CommunityRepository) *Communit
 
 // CreateCommunity creates a new community.
 func (s *CommunityService) CreateCommunity(ctx context.Context, community *models.Community) (*models.Community, error) {
-	community.CreatedAt = time.Now()
-	community.UpdatedAt = time.Now()
+	newTime := time.Now()
+	community.CreatedAt = &newTime
+	community.UpdatedAt = &newTime
 	return s.communityRepo.CreateCommunity(ctx, community)
 }
 
@@ -40,7 +41,8 @@ func (s *CommunityService) GetAllCommunities(ctx context.Context) ([]*models.Com
 
 // UpdateCommunity updates an existing community.
 func (s *CommunityService) UpdateCommunity(ctx context.Context, community *models.Community) error {
-	community.UpdatedAt = time.Now()
+	newTime := time.Now()
+	community.UpdatedAt = &newTime
 	return s.communityRepo.UpdateCommunity(ctx, community)
 }
 

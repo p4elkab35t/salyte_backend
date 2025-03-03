@@ -9,7 +9,7 @@ import (
 
 func LoadConfig(config *Config) {
 	viper.SetConfigName("config")
-	viper.AddConfigPath("./services/auth/config")
+	viper.AddConfigPath("./services/social/config")
 	viper.AutomaticEnv()
 
 	// Read in the configuration file
