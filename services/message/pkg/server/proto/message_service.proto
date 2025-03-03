@@ -7,9 +7,9 @@ option go_package = "github.com/p4elkab35t/salyte_backend/services/message/pkg/p
 
 /// Message represents a chat message.
 message Message {
-  int64 id = 1;
-  int64 chat_id = 2;
-  int64 sender_id = 3;
+  string id = 1;
+  string chat_id = 2;
+  string sender_id = 3;
   string content = 4;
   string created_at = 5;
   string updated_at = 6;
@@ -18,30 +18,34 @@ message Message {
 
 /// Request to send a new message to a chat.
 message SendMessageRequest {
-  int64 chat_id = 1;      // Identifier of the chat.
-  int64 sender_id = 2;    // Sender's user ID.
+    string chat_id = 1;      // Identifier of the chat.
+    string sender_id = 2;    // Sender's user ID.
   string content = 3;     // The text content of the message.
 }
 
 /// Response for SendMessage RPC.
 message SendMessageResponse {
   Message message = 1;    // The message that was created.
+  int32 status = 2;       // Status code for the operation.
 }
 
 /// Request to edit an existing message.
 message EditMessageRequest {
-  int64 message_id = 1;   // ID of the message to edit.
-  string new_content = 2; // Updated message content.
+    string message_id = 1;   // ID of the message to edit.
+    string user_id = 2;      // User editing the message.
+    string new_content = 3; // Updated message content.
 }
 
 /// Response for EditMessage RPC.
 message EditMessageResponse {
   Message message = 1;    // The updated message.
+    int32 status = 2;       // Status code for the operation.
 }
 
 /// Request to delete a message.
 message DeleteMessageRequest {
-  int64 message_id = 1;   // ID of the message to delete.
+    string message_id = 1;   // ID of the message to delete.
+    string user_id = 2;      // User deleting the message.
 }
 
 /// Response for DeleteMessage RPC.
@@ -51,9 +55,9 @@ message DeleteMessageResponse {
 
 /// Request to add an emoji reaction to a message.
 message AddReactionRequest {
-  int64 message_id = 1;   // ID of the target message.
-  int64 user_id = 2;      // User adding the reaction.
-  string reaction = 3;    // Emoji code or short name.
+    string message_id = 1;   // ID of the target message.
+    string user_id = 2;      // User adding the reaction.
+    string reaction = 3;    // Emoji code or short name.
 }
 
 /// Response for AddReaction RPC.
@@ -63,8 +67,8 @@ message AddReactionResponse {
 
 /// Request to remove an emoji reaction from a message.
 message RemoveReactionRequest {
-    int64 message_id = 1;   
-    int64 user_id = 2;
+    string message_id = 1;   
+    string user_id = 2;
     string reaction = 3;
 }
 
@@ -76,24 +80,27 @@ message RemoveReactionResponse {
 /// Request to retrieve new messages for a specific chat.
 /// Uses a timestamp to filter out messages already seen.
 message RetrieveNewMessagesRequest {
-  int64 chat_id = 1;                        // The chat to fetch messages from.
-  string since = 2;      // Fetch messages created after this time.
+    string chat_id = 1;                        // The chat to fetch messages from.
+    string since = 2;      // Fetch messages created after this time.
+    string user_id = 3;                        // The user's ID.
 }
 
 /// Response for RetrieveNewMessages RPC.
 message RetrieveNewMessagesResponse {
   repeated Message messages = 1;            // List of new messages.
+  int32 status = 2;                         // Status code for the operation.
 }
 
 /// Request to retrieve new messages across all chats for a given user.
 message RetrieveAllNewMessagesRequest {
-  int64 user_id = 1;                        // The user's ID.
-  string since = 2;      // Only return messages newer than this.
+    string user_id = 1;                        // The user's ID.
+    string since = 2;      // Only return messages newer than this.
 }
 
 /// Response for RetrieveAllNewMessages RPC.
 message RetrieveAllNewMessagesResponse {
   repeated Message messages = 1;            // List of new messages.
+  int32 status = 2;                         // Status code for the operation.
 }
 
 /// MessagingService defines the gRPC API for messaging operations.

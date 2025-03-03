@@ -21,7 +21,7 @@ func NewMessageService(messageRepo repository.MessageRepository) *MessageService
 }
 
 // Create new message
-func (s *MessageService) CreateMessage(ctx context.Context, message *models.Message, userID uuid.UUID) (*models.Message, error) {
+func (s *MessageService) SendMessage(ctx context.Context, message *models.Message, userID uuid.UUID) (*models.Message, error) {
 	if message.Content == "" {
 		return nil, errors.New("content is required")
 	}
