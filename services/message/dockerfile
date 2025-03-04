@@ -1,0 +1,24 @@
+# Use an official Go runtime as a parent image
+FROM golang:1.19
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the Go module files from the root directory
+COPY go.mod go.sum ./
+
+# Download and install dependencies
+RUN go mod download
+
+# Copy the service-specific code
+COPY services/message/ ./services/message/
+
+# Build the Go application
+RUN go build -o /app/message ./services/message/cmd/main.go
+
+# Expose the port the app runs on (adjust as needed)
+EXPOSE 8083
+EXPOSE 50052
+
+# Command to run the application
+CMD ["/app/message"]
