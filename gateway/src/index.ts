@@ -5,21 +5,32 @@ import secureServiceHandler from "./router/secure/secure.router";
 import { CONFIG } from "./config/config";
 import { Logger } from "./logger/logger";
 import socialServiceHandler from "./router/social/social.handler";
+import messageServiceHandler from "./router/message/message.rest.handler";
+import websocketHandler from "./router/message/message.handler"
+
 
 // console.log(import.meta.dir);
 
 const services = new Map<string, Function>([
     ["/status", apiStatusHandler],
     ["/secure", secureServiceHandler],
-    // ["/message", messageHandler],
+    ["/message", messageServiceHandler],
     ["/social", socialServiceHandler],
 ])
 
-const server = Bun.serve({
+const server: Bun.Server = Bun.serve({
     port: CONFIG.PORT,
-    fetch(req: Request) {
+    fetch(req: Request, s){
       const url = new URL(req.url);
       const apiCheck = url.pathname.split("/")[1];
+
+      const urlParams = new URLSearchParams(url.search);
+      if(s.upgrade(req, {
+        data: urlParams
+      })) 
+        {
+          return;
+        }
       if (apiCheck !== "api") {
         Logger.error(`Invalid API prefix`, { path: url.pathname });
         return new Response("Invalid path", { status: 404 });
@@ -49,7 +60,19 @@ const server = Bun.serve({
         return new Response(JSON.stringify({ error: "No route attached" }), { status: 404 });
       }
     },
+    websocket: {
+      open(ws) {
+        websocketHandler.open(ws);
+      },
+      message(ws, message) {
+        websocketHandler.message(ws, message);
+      },
+      close(ws) {
+        websocketHandler.close(ws);
+      },
+    },
   });
+  
   
   Logger.info(`Listening on http://localhost:${server.port} ...`);
 

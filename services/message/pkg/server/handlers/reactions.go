@@ -4,11 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	// "os/user"
-
 	"github.com/google/uuid"
 	"github.com/p4elkab35t/salyte_backend/services/message/pkg/logic"
-	// "github.com/p4elkab35t/salyte_backend/services/message/pkg/models"
 )
 
 type ReactionHandler struct {
