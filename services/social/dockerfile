@@ -14,7 +14,7 @@ RUN go mod download
 COPY services/social/ ./services/social/
 
 # Build the Go application
-RUN go build -o /app/social ./services/social/cmd/main.go
+RUN go build -o /app/social ./services/social/
 
 # Expose the port the app runs on (adjust as needed)
 EXPOSE 8081

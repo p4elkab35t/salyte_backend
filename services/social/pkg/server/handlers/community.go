@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"context"
+	// "context"
 	"encoding/json"
 	"net/http"
 
@@ -20,7 +20,7 @@ func NewCommunityHandler(communityLogic *logic.CommunityService) *CommunityHandl
 
 // GetCommunity handles GET requests to retrieve a community.
 func (h *CommunityHandler) GetCommunity(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Background()
+	ctx := r.Context()
 	communityID := r.URL.Query().Get("communityID")
 
 	community, err := h.communityLogic.GetCommunityByID(ctx, communityID)
@@ -38,7 +38,7 @@ func (h *CommunityHandler) GetCommunity(w http.ResponseWriter, r *http.Request) 
 
 // CreateCommunity handles POST requests to create a new community.
 func (h *CommunityHandler) CreateCommunity(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Background()
+	ctx := r.Context()
 
 	var community models.Community
 	if err := json.NewDecoder(r.Body).Decode(&community); err != nil {
@@ -63,7 +63,7 @@ func (h *CommunityHandler) CreateCommunity(w http.ResponseWriter, r *http.Reques
 
 // UpdateCommunity handles PUT requests to update a community.
 func (h *CommunityHandler) UpdateCommunity(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Background()
+	ctx := r.Context()
 	communityID := r.URL.Query().Get("communityID")
 
 	var community models.Community
@@ -89,7 +89,7 @@ func (h *CommunityHandler) UpdateCommunity(w http.ResponseWriter, r *http.Reques
 
 // GetCommunityMembers handles GET requests to retrieve community members.
 func (h *CommunityHandler) GetCommunityMembers(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Background()
+	ctx := r.Context()
 	communityID := r.URL.Query().Get("communityID")
 
 	members, err := h.communityLogic.GetCommunityFollowers(ctx, communityID)
