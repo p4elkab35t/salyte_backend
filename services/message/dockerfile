@@ -21,4 +21,4 @@ EXPOSE 8083
 EXPOSE 50052
 
 # Command to run the application
-CMD ["/app/message"]
+CMD ["./message"]

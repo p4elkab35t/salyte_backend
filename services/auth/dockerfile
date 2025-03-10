@@ -20,4 +20,4 @@ RUN go build -o /app/auth ./services/auth/cmd/main.go
 EXPOSE 50051
 
 # Command to run the application
-CMD ["/app/auth"]
+CMD ["./auth"]
