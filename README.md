@@ -71,34 +71,217 @@ Below is an API for each of the service (only API for main API gateway)
 #### /profile
 - **Methods**: GET, PUT
 - **Description**: Manage user profiles.
+- **GET Response**: 
+  ```json
+  {
+    "profile_id": "string",
+    "user_id": "string",
+    "username": "string",
+    "bio": "string",
+    "profile_picture_url": "string",
+    "visibility": "string",
+    "created_at": "string",
+    "updated_at": "string"
+  }
+  ```
+  or `{ error: "Failed to get profile" }`
+- **PUT Body**: 
+  ```json
+  {
+    "username": "string",
+    "bio": "string",
+    "profile_picture_url": "string",
+    "visibility": "string"
+  }
+  ```
+- **PUT Response**: `{ message: "profile updated" }` or `{ error: "Failed to update profile" }`
 
 #### /follow
 - **Methods**: POST, DELETE
 - **Description**: Follow or unfollow users.
+- **POST Query Params**: `profileID=<profile_id>`
+- **POST Response**: `{ message: "profile followed" }` or `{ error: "Failed to follow profile" }`
+- **DELETE Query Params**: `profileID=<profile_id>`
+- **DELETE Response**: `{ message: "profile unfollowed" }` or `{ error: "Failed to unfollow profile" }`
 
 #### /friends
 - **Methods**: GET, POST
 - **Description**: Manage friends list.
+- **GET Response**: 
+  ```json
+  [
+    {
+      "profile_id": "string",
+      "user_id": "string",
+      "username": "string",
+      "bio": "string",
+      "profile_picture_url": "string",
+      "visibility": "string",
+      "created_at": "string",
+      "updated_at": "string"
+    }
+  ]
+  ```
+  or `{ error: "Failed to get friends" }`
+- **POST Query Params**: `profileID=<profile_id>`
+- **POST Response**: `{ message: "profile followed" }` or `{ error: "Failed to follow profile" }`
 
 #### /community
 - **Methods**: GET, POST, PUT
 - **Description**: Manage communities.
+- **GET Query Params**: `communityID=<community_id>`
+- **GET Response**: 
+  ```json
+  {
+    "community_id": "string",
+    "name": "string",
+    "description": "string",
+    "profile_picture_url": "string",
+    "visibility": "string",
+    "created_at": "string",
+    "updated_at": "string"
+  }
+  ```
+  or `{ error: "Failed to get community" }`
+- **POST Body**: 
+  ```json
+  {
+    "name": "string",
+    "description": "string",
+    "profile_picture_url": "string",
+    "visibility": "string"
+  }
+  ```
+- **POST Response**: 
+  ```json
+  {
+    "community_id": "string",
+    "created_at": "string",
+    "updated_at": "string"
+  }
+  ```
+  or `{ error: "Failed to create community" }`
+- **PUT Query Params**: `communityID=<community_id>`
+- **PUT Body**: 
+  ```json
+  {
+    "name": "string",
+    "description": "string",
+    "profile_picture_url": "string",
+    "visibility": "string"
+  }
+  ```
+- **PUT Response**: `{ message: "community updated" }` or `{ error: "Failed to update community" }`
 
 #### /post
 - **Methods**: GET, POST, PUT, DELETE
 - **Description**: Manage posts.
+- **GET Query Params**: `postID=<post_id>`
+- **GET Response**: 
+  ```json
+  {
+    "post_id": "string",
+    "profile_id": "string",
+    "community_id": "string",
+    "content": "string",
+    "media_url": "string",
+    "visibility": "string",
+    "created_at": "string",
+    "updated_at": "string"
+  }
+  ```
+  or `{ error: "Failed to get post" }`
+- **POST Body**: 
+  ```json
+  {
+    "profile_id": "string",
+    "community_id": "string",
+    "content": "string",
+    "media_url": "string",
+    "visibility": "string"
+  }
+  ```
+- **POST Response**: 
+  ```json
+  {
+    "post_id": "string",
+    "created_at": "string",
+    "updated_at": "string"
+  }
+  ```
+  or `{ error: "Failed to create post" }`
+- **PUT Query Params**: `postID=<post_id>`
+- **PUT Body**: 
+  ```json
+  {
+    "content": "string",
+    "media_url": "string",
+    "visibility": "string"
+  }
+  ```
+- **PUT Response**: `{ message: "post updated" }` or `{ error: "Failed to update post" }`
+- **DELETE Query Params**: `postID=<post_id>`
+- **DELETE Response**: `{ message: "post deleted" }` or `{ error: "Failed to delete post" }`
 
 #### /post/comment
 - **Methods**: POST, PUT, DELETE
 - **Description**: Manage comments on posts.
+- **POST Body**: 
+  ```json
+  {
+    "profile_id": "string",
+    "post_id": "string",
+    "content": "string"
+  }
+  ```
+- **POST Response**: 
+  ```json
+  {
+    "comment_id": "string",
+    "created_at": "string",
+    "updated_at": "string"
+  }
+  ```
+  or `{ error: "Failed to create comment" }`
+- **PUT Query Params**: `commentID=<comment_id>`
+- **PUT Body**: 
+  ```json
+  {
+    "content": "string"
+  }
+  ```
+- **PUT Response**: `{ message: "comment updated" }` or `{ error: "Failed to update comment" }`
+- **DELETE Query Params**: `commentID=<comment_id>`
+- **DELETE Response**: `{ message: "comment deleted" }` or `{ error: "Failed to delete comment" }`
 
 #### /post/likes
 - **Methods**: GET
 - **Description**: Get likes on posts.
+- **GET Query Params**: `postID=<post_id>`
+- **GET Response**: 
+  ```json
+  [
+    {
+      "profile_id": "string",
+      "user_id": "string",
+      "username": "string",
+      "bio": "string",
+      "profile_picture_url": "string",
+      "visibility": "string",
+      "created_at": "string",
+      "updated_at": "string"
+    }
+  ]
+  ```
+  or `{ error: "Failed to get likes" }`
 
 #### /post/like
 - **Methods**: POST, DELETE
 - **Description**: Like or unlike posts.
+- **POST Query Params**: `postID=<post_id>`
+- **POST Response**: `{ message: "post liked" }` or `{ error: "Failed to like post" }`
+- **DELETE Query Params**: `postID=<post_id>`
+- **DELETE Response**: `{ message: "post unliked" }` or `{ error: "Failed to unlike post" }`
 
 ### Message service
 
