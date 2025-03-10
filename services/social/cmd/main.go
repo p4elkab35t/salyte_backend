@@ -78,8 +78,8 @@ func main() {
 	})
 
 	// Profile routes
-	protectedRoutes.HandleFunc("/profile", profileHandler.CreateProfile).Methods("POST")
-	protectedRoutes.HandleFunc("/profile", profileHandler.GetProfile).Methods("GET")
+	r.HandleFunc("/profile", profileHandler.CreateProfile).Methods("POST")
+	r.HandleFunc("/profile", profileHandler.GetProfile).Methods("GET")
 	protectedRoutes.HandleFunc("/profile/update", profileHandler.UpdateProfile).Methods("PUT")
 	protectedRoutes.HandleFunc("/profile/settings", profileHandler.GetProfileSettings).Methods("GET")
 	protectedRoutes.HandleFunc("/profile/settings/update", profileHandler.UpdateProfileSettings).Methods("PUT")
@@ -102,11 +102,11 @@ func main() {
 
 	// Post routes
 	protectedRoutes.HandleFunc("/post", postHandler.CreatePost).Methods("POST")
-	protectedRoutes.HandleFunc("/post", postHandler.GetPost).Methods("GET")
+	r.HandleFunc("/post", postHandler.GetPost).Methods("GET")
 	protectedRoutes.HandleFunc("/post/update", postHandler.UpdatePost).Methods("PUT")
 	protectedRoutes.HandleFunc("/post/delete", postHandler.DeletePost).Methods("DELETE")
 	protectedRoutes.HandleFunc("/post/community", postHandler.GetPostsByCommunity).Methods("GET")
-	protectedRoutes.HandleFunc("/post/user", postHandler.GetPostsByUser).Methods("GET")
+	r.HandleFunc("/post/user", postHandler.GetPostsByUser).Methods("GET")
 
 	// Comment routes
 	protectedRoutes.HandleFunc("/post/comment", commentHandler.CreateComment).Methods("POST")
