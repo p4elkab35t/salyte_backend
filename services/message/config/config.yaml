@@ -10,7 +10,7 @@ server:
 
 database:
   postgres:
-    host: "localhost"    # PostgreSQL host
+    host: "db"    # PostgreSQL host
     port: 5432           # PostgreSQL port
     user: "postgres"    # PostgreSQL username
     password: "1"   # PostgreSQL password
