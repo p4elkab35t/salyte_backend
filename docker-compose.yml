@@ -30,6 +30,7 @@ services:
       - GO_ENV=development
     depends_on:
       - db
+      - social
 
   # Social Service (Go)
   social:
