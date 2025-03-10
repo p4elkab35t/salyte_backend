@@ -14,7 +14,7 @@ RUN go mod download
 COPY services/message/ ./services/message/
 
 # Build the Go application
-RUN go build -o /app/message ./services/message/
+RUN go build -o /app/message ./services/message/cmd/main.go
 
 # Expose the port the app runs on (adjust as needed)
 EXPOSE 8083

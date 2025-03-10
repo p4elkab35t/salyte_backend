@@ -14,7 +14,7 @@ RUN go mod download
 COPY services/auth/ ./services/auth/
 
 # Build the Go application
-RUN go build -o /app/auth ./services/auth/
+RUN go build -o /app/auth ./services/auth/cmd/main.go
 
 # Expose the port the app runs on (adjust as needed)
 EXPOSE 50051
