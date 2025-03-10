@@ -24,7 +24,7 @@ SET row_security = off;
 -- Name: salyte_user; Type: DATABASE; Schema: -; Owner: postgres
 --
 
-CREATE DATABASE salyte_user IF NOT EXISTS WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE_PROVIDER = libc LOCALE = 'Russian_Russia.1251';
+CREATE DATABASE salyte_user;
 
 
 ALTER DATABASE salyte_user OWNER TO postgres;
