@@ -16,6 +16,8 @@ services:
       - auth
       - social
       - message
+    networks:
+      - salyte
 
   # Auth Service (Go)
   auth:
@@ -31,6 +33,8 @@ services:
     depends_on:
       - db
       - social
+    networks:
+      - salyte
 
   # Social Service (Go)
   social:
@@ -45,6 +49,8 @@ services:
       - GO_ENV=development
     depends_on:
       - db
+    networks:
+      - salyte
 
   # Message Service (Go)
   message:
@@ -60,6 +66,8 @@ services:
       - GO_ENV=development
     depends_on:
       - db
+    networks:
+      - salyte
 
   # Database (Example: PostgreSQL)
   db:
@@ -79,3 +87,8 @@ services:
 # Volumes for persistent data
 volumes:
   postgres_data:
+  
+# Network for communication between services
+networks:
+  salyte:
+    driver: bridge

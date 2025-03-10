@@ -71,7 +71,7 @@ func (s *AuthLogicService) SignUp(ctx context.Context, email, password string) (
 		return nil, err
 	}
 
-	hookUrl := "http://localhost:8081/social/profile"
+	hookUrl := "http://social:8081/social/profile"
 	req, err := http.NewRequest("POST", hookUrl, bytes.NewBuffer(jsonData))
 	if err != nil {
 		return nil, err
