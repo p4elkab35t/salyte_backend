@@ -62,6 +62,9 @@ services:
 
   # Database (Example: PostgreSQL)
   db:
+    build:
+      context: .
+      dockerfile: ./db_sql/dockerfile
     image: postgres:latest
     ports:
       - "5432:5432"
@@ -69,8 +72,8 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 1
     volumes:
-      - postgres_data:/var/lib/postgresql/data
       - ./db_sql:/docker-entrypoint-initdb.d
+      - postgres_data:/var/lib/postgresql/data
 
 # Volumes for persistent data
 volumes:
