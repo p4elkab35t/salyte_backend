@@ -61,6 +61,36 @@ func (h *ProfileHandler) CreateProfile(w http.ResponseWriter, r *http.Request) {
 func (h *ProfileHandler) GetProfile(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	userID := r.URL.Query().Get("userID")
+	profileID := r.URL.Query().Get("profileID")
+
+	if userID == "" && profileID == "" {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "missing userID or profileID query parameter"})
+		return
+	}
+
+	if userID != "" && profileID != "" {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "only one of userID or profileID query parameter is allowed"})
+		return
+	}
+
+	if userID != "" {
+		profile, err := h.profileLogic.GetProfileByUserID(ctx, userID)
+		if err != nil {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(profile)
+		return
+	}
 
 	profile, err := h.profileLogic.GetProfileByID(ctx, userID)
 	if err != nil {
