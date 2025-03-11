@@ -114,6 +114,13 @@ func (h *CommentHandler) GetCommentsByPostID(w http.ResponseWriter, r *http.Requ
 	ctx := r.Context()
 	postID := r.URL.Query().Get("postID")
 
+	if postID == "" {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "postID is required"})
+		return
+	}
+
 	comments, err := h.commentLogic.GetCommentsByPostID(ctx, postID)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")
