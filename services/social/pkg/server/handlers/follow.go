@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	// "strings"
-
+	"github.com/google/uuid"
 	"github.com/p4elkab35t/salyte_backend/services/social/pkg/logic"
 )
 
@@ -21,18 +21,18 @@ func NewFollowHandler(followLogic *logic.FollowService) *FollowHandler {
 // FollowProfile handles POST requests to follow a profile.
 func (h *FollowHandler) FollowProfile(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	profileID := r.URL.Query().Get("profileID")
+	profileToFollowID := r.URL.Query().Get("profileID")
 
 	// Extract user ID from the request (e.g., from a JWT token or session)
-	userID := ctx.Value("profileID").(string)
-	if userID == "" {
+	profileID := ctx.Value("profileID").(uuid.UUID).String()
+	if profileID == "" {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(w).Encode(map[string]string{"error": "user ID is required"})
 		return
 	}
 
-	if err := h.followLogic.FollowProfile(ctx, userID, profileID); err != nil {
+	if err := h.followLogic.FollowProfile(ctx, profileID, profileToFollowID); err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
@@ -47,18 +47,18 @@ func (h *FollowHandler) FollowProfile(w http.ResponseWriter, r *http.Request) {
 // UnfollowProfile handles DELETE requests to unfollow a profile.
 func (h *FollowHandler) UnfollowProfile(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	profileID := r.URL.Query().Get("profileID")
+	profileToFollowID := r.URL.Query().Get("profileID")
 
 	// Extract user ID from the request (e.g., from a JWT token or session)
-	userID := ctx.Value("profileID").(string)
-	if userID == "" {
+	profileID := ctx.Value("profileID").(uuid.UUID).String()
+	if profileID == "" {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(w).Encode(map[string]string{"error": "user ID is required"})
 		return
 	}
 
-	if err := h.followLogic.UnfollowProfile(ctx, userID, profileID); err != nil {
+	if err := h.followLogic.UnfollowProfile(ctx, profileID, profileToFollowID); err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
@@ -146,18 +146,18 @@ func (h *FollowHandler) GetFriendRequests(w http.ResponseWriter, r *http.Request
 
 func (h *FollowHandler) MakeFriend(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	profileID := r.URL.Query().Get("profileID")
+	profileToFollowID := r.URL.Query().Get("profileID")
 
 	// Extract user ID from the request (e.g., from a JWT token or session)
-	userID := ctx.Value("profileID").(string)
-	if userID == "" {
+	profileID := ctx.Value("profileID").(uuid.UUID).String()
+	if profileID == "" {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(w).Encode(map[string]string{"error": "user ID is required"})
 		return
 	}
 
-	if err := h.followLogic.MakeFriends(ctx, userID, profileID); err != nil {
+	if err := h.followLogic.MakeFriends(ctx, profileID, profileToFollowID); err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
@@ -171,19 +171,19 @@ func (h *FollowHandler) MakeFriend(w http.ResponseWriter, r *http.Request) {
 
 func (h *FollowHandler) Unfriend(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	profileID := r.URL.Query().Get("profileID")
+	profileToFollowID := r.URL.Query().Get("profileID")
 
 	// Extract user ID from the request (e.g., from a JWT token or session)
 
-	userID := ctx.Value("profileID").(string)
-	if userID == "" {
+	profileID := ctx.Value("profileID").(uuid.UUID).String()
+	if profileID == "" {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(w).Encode(map[string]string{"error": "user ID is required"})
 		return
 	}
 
-	if err := h.followLogic.Unfriend(ctx, userID, profileID); err != nil {
+	if err := h.followLogic.Unfriend(ctx, profileID, profileToFollowID); err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})

@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	// "strings"
-
+	"github.com/google/uuid"
 	"github.com/p4elkab35t/salyte_backend/services/social/pkg/logic"
 )
 
@@ -61,16 +61,15 @@ func (h *InteractionHandler) LikePost(w http.ResponseWriter, r *http.Request) {
 	postID := r.URL.Query().Get("postID")
 	fmt.Println(postID)
 	// Extract user ID from the request (e.g., from a JWT token or session)
-	userID := ctx.Value("profileID").(string) // Here we are using the profileID but its called UserID need refactor
-	fmt.Println(userID)
-	if userID == "" {
+	profileID := ctx.Value("profileID").(uuid.UUID).String()
+	if profileID == "" {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(w).Encode(map[string]string{"error": "user ID is required"})
 		return
 	}
 
-	if err := h.interactionLogic.LikePost(ctx, userID, postID); err != nil {
+	if err := h.interactionLogic.LikePost(ctx, profileID, postID); err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
@@ -88,16 +87,15 @@ func (h *InteractionHandler) UnlikePost(w http.ResponseWriter, r *http.Request) 
 	postID := r.URL.Query().Get("postID")
 	fmt.Println(postID)
 	// Extract user ID from the request (e.g., from a JWT token or session)
-	userID := ctx.Value("profileID").(string) // Here we are using the profileID but its called UserID need refactor
-	fmt.Println(userID)
-	if userID == "" {
+	profileID := ctx.Value("profileID").(uuid.UUID).String()
+	if profileID == "" {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(w).Encode(map[string]string{"error": "user ID is required"})
 		return
 	}
 
-	if err := h.interactionLogic.UnlikePost(ctx, userID, postID); err != nil {
+	if err := h.interactionLogic.UnlikePost(ctx, profileID, postID); err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
