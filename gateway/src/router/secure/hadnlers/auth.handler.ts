@@ -59,7 +59,7 @@ const routes = new Map<string, { method: string[], handler: Function }>([
     Logger.info("Token verified", { result });
     return new Response(JSON.stringify(result), { status: 200 });
   } catch (error) {
-    return new Response(JSON.stringify({ error: "Verification failed" }), { status: 401 });
+    return new Response(JSON.stringify({ error: {error} }), { status: 401 });
   }
   }
 
@@ -91,7 +91,7 @@ const routes = new Map<string, { method: string[], handler: Function }>([
       return new Response(JSON.stringify({ error: "Method not allowed" }), { status: 405 });
     }
   } catch (error) {
-    return new Response(JSON.stringify({ error: "Sign in failed" }), { status: 401 });
+    return new Response(JSON.stringify({ error: {error} }), { status: 401 });
   }
   }
 
@@ -106,7 +106,7 @@ const routes = new Map<string, { method: string[], handler: Function }>([
     Logger.info("User signed up", { result });
     return new Response(JSON.stringify(result), { status: 200 });
   } catch (error) {
-    return new Response(JSON.stringify({ error: "Sign up failed" }), { status: 401 });
+    return new Response(JSON.stringify({ error: {error} }), { status: 401 });
   }
   }
 
@@ -124,7 +124,7 @@ const routes = new Map<string, { method: string[], handler: Function }>([
     Logger.info("User signed out", { result });
     return new Response(JSON.stringify(result), { status: 200 });
   } catch (error) {
-    return new Response(JSON.stringify({ error: "Sign out failed" }), { status: 401 });
+    return new Response(JSON.stringify({ error: {error} }), { status: 401 });
   }
   }
 
