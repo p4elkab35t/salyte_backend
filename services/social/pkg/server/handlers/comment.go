@@ -31,7 +31,7 @@ func (h *CommentHandler) CreateComment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	comment.ProfileID = uuid.MustParse(ctx.Value("profileID").(string))
+	comment.ProfileID = uuid.MustParse(ctx.Value("profileID").(uuid.UUID).String())
 
 	createdComment, err := h.commentLogic.CreateComment(ctx, &comment)
 	if err != nil {
@@ -77,7 +77,7 @@ func (h *CommentHandler) UpdateComment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	comment.ProfileID = uuid.MustParse(ctx.Value("profileID").(string))
+	comment.ProfileID = uuid.MustParse(ctx.Value("profileID").(uuid.UUID).String())
 
 	comment.CommentID = uuid.MustParse(commentID)
 	if err := h.commentLogic.UpdateComment(ctx, &comment); err != nil {
