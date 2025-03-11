@@ -24,7 +24,7 @@ func (h *FollowHandler) FollowProfile(w http.ResponseWriter, r *http.Request) {
 	profileID := r.URL.Query().Get("profileID")
 
 	// Extract user ID from the request (e.g., from a JWT token or session)
-	userID := ctx.Value("ProfileID").(string)
+	userID := ctx.Value("profileID").(string)
 	if userID == "" {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusUnauthorized)
@@ -50,7 +50,7 @@ func (h *FollowHandler) UnfollowProfile(w http.ResponseWriter, r *http.Request) 
 	profileID := r.URL.Query().Get("profileID")
 
 	// Extract user ID from the request (e.g., from a JWT token or session)
-	userID := ctx.Value("ProfileID").(string)
+	userID := ctx.Value("profileID").(string)
 	if userID == "" {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusUnauthorized)
@@ -149,7 +149,7 @@ func (h *FollowHandler) MakeFriend(w http.ResponseWriter, r *http.Request) {
 	profileID := r.URL.Query().Get("profileID")
 
 	// Extract user ID from the request (e.g., from a JWT token or session)
-	userID := ctx.Value("ProfileID").(string)
+	userID := ctx.Value("profileID").(string)
 	if userID == "" {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusUnauthorized)
@@ -175,7 +175,7 @@ func (h *FollowHandler) Unfriend(w http.ResponseWriter, r *http.Request) {
 
 	// Extract user ID from the request (e.g., from a JWT token or session)
 
-	userID := ctx.Value("ProfileID").(string)
+	userID := ctx.Value("profileID").(string)
 	if userID == "" {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusUnauthorized)

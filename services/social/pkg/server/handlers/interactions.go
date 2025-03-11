@@ -61,7 +61,7 @@ func (h *InteractionHandler) LikePost(w http.ResponseWriter, r *http.Request) {
 	postID := r.URL.Query().Get("postID")
 	fmt.Println(postID)
 	// Extract user ID from the request (e.g., from a JWT token or session)
-	userID := ctx.Value("ProfileID").(string) // Here we are using the ProfileID but its called UserID need refactor
+	userID := ctx.Value("profileID").(string) // Here we are using the profileID but its called UserID need refactor
 	fmt.Println(userID)
 	if userID == "" {
 		w.Header().Set("Content-Type", "application/json")
@@ -88,7 +88,7 @@ func (h *InteractionHandler) UnlikePost(w http.ResponseWriter, r *http.Request) 
 	postID := r.URL.Query().Get("postID")
 	fmt.Println(postID)
 	// Extract user ID from the request (e.g., from a JWT token or session)
-	userID := ctx.Value("ProfileID").(string) // Here we are using the ProfileID but its called UserID need refactor
+	userID := ctx.Value("profileID").(string) // Here we are using the profileID but its called UserID need refactor
 	fmt.Println(userID)
 	if userID == "" {
 		w.Header().Set("Content-Type", "application/json")
