@@ -45,26 +45,59 @@ Below is an API for each of the service (only API for main API gateway)
 - **Description**: Verify a token.
 - **Headers**: `Authorization: Bearer <token>`
 - **Query Params**: `user_id=<user_id>`
-- **Response**: `{ status: 0, ... }` or `{ error: "Verification failed" }`
+- **Response**: 
+  ```json
+  {
+    "status": 0,
+    "user_id": "string",
+    "email": "string",
+    "roles": ["string"]
+  }
+  ```
+  or `{ error: "Verification failed" }`
 
 #### /signin
 - **Method**: GET, POST
 - **Description**: Sign in a user.
 - **Headers**: `Authorization: Bearer <token>` (for GET)
 - **Body**: `{ email: <email>, password: <password> }` (for POST)
-- **Response**: `{ status: 0, ... }` or `{ error: "Sign in failed" }`
+- **Response**: 
+  ```json
+  {
+    "status": 0,
+    "user_id": "string",
+    "email": "string",
+    "token": "string"
+  }
+  ```
+  or `{ error: "Sign in failed" }`
 
 #### /signup
 - **Method**: POST
 - **Description**: Register a new user.
 - **Body**: `{ email: <email>, password: <password> }`
-- **Response**: `{ status: 0, ... }` or `{ error: "Sign up failed" }`
+- **Response**: 
+  ```json
+  {
+    "status": 0,
+    "user_id": "string",
+    "email": "string"
+  }
+  ```
+  or `{ error: "Sign up failed" }`
 
 #### /signout
 - **Method**: GET
 - **Description**: Sign out a user.
 - **Headers**: `Authorization: Bearer <token>`
-- **Response**: `{ status: 0, ... }` or `{ error: "Sign out failed" }`
+- **Response**: 
+  ```json
+  {
+    "status": 0,
+    "message": "Signed out successfully"
+  }
+  ```
+  or `{ error: "Sign out failed" }`
 
 ### Social service
 
@@ -289,13 +322,45 @@ Below is an API for each of the service (only API for main API gateway)
 - **Method**: GET
 - **Description**: Get messages by chat ID.
 - **Query Params**: `chat_id=<chat_id>&user_id=<user_id>`
-- **Response**: `{ status: 0, messages: [...] }` or `{ error: "Failed to get messages" }`
+- **Response**: 
+  ```json
+  {
+    "status": 0,
+    "messages": [
+      {
+        "message_id": "string",
+        "chat_id": "string",
+        "sender_id": "string",
+        "content": "string",
+        "created_at": "string",
+        "updated_at": "string"
+      }
+    ]
+  }
+  ```
+  or `{ error: "Failed to get messages" }`
 
 #### /getUnreadMessages
 - **Method**: GET
 - **Description**: Get unread messages.
 - **Query Params**: `user_id=<user_id>`
-- **Response**: `{ status: 0, messages: [...] }` or `{ error: "Failed to get unread messages" }`
+- **Response**: 
+  ```json
+  {
+    "status": 0,
+    "messages": [
+      {
+        "message_id": "string",
+        "chat_id": "string",
+        "sender_id": "string",
+        "content": "string",
+        "created_at": "string",
+        "updated_at": "string"
+      }
+    ]
+  }
+  ```
+  or `{ error: "Failed to get unread messages" }`
 
 #### /deleteAllMessagesByChatID
 - **Method**: POST
@@ -308,19 +373,57 @@ Below is an API for each of the service (only API for main API gateway)
 - **Method**: GET
 - **Description**: Get chat details.
 - **Query Params**: `chat_id=<chat_id>`
-- **Response**: `{ status: 0, chat: { ... } }` or `{ error: "Failed to get chat" }`
+- **Response**: 
+  ```json
+  {
+    "status": 0,
+    "chat": {
+      "chat_id": "string",
+      "name": "string",
+      "created_at": "string",
+      "updated_at": "string"
+    }
+  }
+  ```
+  or `{ error: "Failed to get chat" }`
 
 #### /createChat
 - **Method**: POST
 - **Description**: Create a new chat.
 - **Body**: `{ ... }`
-- **Response**: `{ status: 0, chat: { ... } }` or `{ error: "Failed to create chat" }`
+- **Response**: 
+  ```json
+  {
+    "status": 0,
+    "chat": {
+      "chat_id": "string",
+      "name": "string",
+      "created_at": "string",
+      "updated_at": "string"
+    }
+  }
+  ```
+  or `{ error: "Failed to create chat" }`
 
 #### /getAllChats
 - **Method**: GET
 - **Description**: Get all chats for a user.
 - **Query Params**: `user_id=<user_id>`
-- **Response**: `{ status: 0, chats: [...] }` or `{ error: "Failed to get chats" }`
+- **Response**: 
+  ```json
+  {
+    "status": 0,
+    "chats": [
+      {
+        "chat_id": "string",
+        "name": "string",
+        "created_at": "string",
+        "updated_at": "string"
+      }
+    ]
+  }
+  ```
+  or `{ error: "Failed to get chats" }`
 
 #### /addUserToChat
 - **Method**: POST
@@ -340,19 +443,56 @@ Below is an API for each of the service (only API for main API gateway)
 - **Method**: GET
 - **Description**: Get members of a chat.
 - **Query Params**: `chat_id=<chat_id>&user_id=<user_id>`
-- **Response**: `{ status: 0, members: [...] }` or `{ error: "Failed to get chat members" }`
+- **Response**: 
+  ```json
+  {
+    "status": 0,
+    "members": [
+      {
+        "user_id": "string",
+        "username": "string",
+        "profile_picture_url": "string"
+      }
+    ]
+  }
+  ```
+  or `{ error: "Failed to get chat members" }`
 
 #### /getChatByID
 - **Method**: GET
 - **Description**: Get chat by ID.
 - **Query Params**: `chat_id=<chat_id>&user_id=<user_id>`
-- **Response**: `{ status: 0, chat: { ... } }` or `{ error: "Failed to get chat" }`
+- **Response**: 
+  ```json
+  {
+    "status": 0,
+    "chat": {
+      "chat_id": "string",
+      "name": "string",
+      "created_at": "string",
+      "updated_at": "string"
+    }
+  }
+  ```
+  or `{ error: "Failed to get chat" }`
 
 #### /getReactions
 - **Method**: GET
 - **Description**: Get reactions for a message.
 - **Query Params**: `message_id=<message_id>&user_id=<user_id>`
-- **Response**: `{ status: 0, reactions: [...] }` or `{ error: "Failed to get reactions" }`
+- **Response**: 
+  ```json
+  {
+    "status": 0,
+    "reactions": [
+      {
+        "user_id": "string",
+        "reaction": "string"
+      }
+    ]
+  }
+  ```
+  or `{ error: "Failed to get reactions" }`
 
 ### Message realtime reference
 
@@ -385,6 +525,91 @@ Below is an API for each of the service (only API for main API gateway)
   - **reactionApply**: `{ type: "success", message: "Reaction applied" }` or `{ type: "error", message: "Failed to apply reaction" }`
   - **reactionRemove**: `{ type: "success", message: "Reaction removed" }` or `{ type: "error", message: "Failed to remove reaction" }`
   - **read**: `{ type: "success", message: "Message marked as read" }` or `{ type: "error", message: "Failed to mark message as read" }`
+
+#### Reactive Updates Interface
+
+##### newMessage
+- **Description**: Broadcasted when a new message is sent in the chat.
+- **Data**:
+  ```json
+  {
+    "type": "newMessage",
+    "message": {
+      "message_id": "string",
+      "chat_id": "string",
+      "sender_id": "string",
+      "content": "string",
+      "created_at": "string",
+      "updated_at": "string"
+    }
+  }
+  ```
+- **Purpose**: Notify all clients in the chat room about the new message.
+
+##### editedMessage
+- **Description**: Broadcasted when a message is edited in the chat.
+- **Data**:
+  ```json
+  {
+    "type": "editedMessage",
+    "message": {
+      "message_id": "string",
+      "chat_id": "string",
+      "sender_id": "string",
+      "content": "string",
+      "created_at": "string",
+      "updated_at": "string"
+    }
+  }
+  ```
+- **Purpose**: Notify all clients in the chat room about the edited message.
+
+##### deletedMessage
+- **Description**: Broadcasted when a message is deleted in the chat.
+- **Data**:
+  ```json
+  {
+    "type": "deletedMessage",
+    "message_id": "string"
+  }
+  ```
+- **Purpose**: Notify all clients in the chat room about the deleted message.
+
+##### reactionApplied
+- **Description**: Broadcasted when a reaction is applied to a message in the chat.
+- **Data**:
+  ```json
+  {
+    "type": "reactionApplied",
+    "message_id": "string",
+    "reaction": "string"
+  }
+  ```
+- **Purpose**: Notify all clients in the chat room about the applied reaction.
+
+##### reactionRemoved
+- **Description**: Broadcasted when a reaction is removed from a message in the chat.
+- **Data**:
+  ```json
+  {
+    "type": "reactionRemoved",
+    "message_id": "string",
+    "reaction": "string"
+  }
+  ```
+- **Purpose**: Notify all clients in the chat room about the removed reaction.
+
+##### messageRead
+- **Description**: Broadcasted when a message is marked as read in the chat.
+- **Data**:
+  ```json
+  {
+    "type": "messageRead",
+    "message_id": "string"
+  }
+  ```
+- **Purpose**: Notify all clients in the chat room about the read message.
+
 
 ##### close
 - **Description**: Close a WebSocket connection.
