@@ -80,6 +80,7 @@ const routes = new Map<string, { method: string[], handler: Function }>([
     }
     else if (req.method === "POST") {
       const body = await req.json();
+      console.log("body", body)
       const result = await promisifyCallback(authClient.SignInCredentials,{ email: body.email, password: body.password });
       if (result.status !== 0){
         return new Response(JSON.stringify({ error: "Sign in failed" }), { status: 401 });
