@@ -89,7 +89,7 @@ func main() {
 	// Follow routes
 
 	protectedRoutes.HandleFunc("/follow", followHandler.FollowProfile).Methods("POST")
-	protectedRoutes.HandleFunc("/unfollow", followHandler.UnfollowProfile).Methods("DELETE")
+	protectedRoutes.HandleFunc("/follow", followHandler.UnfollowProfile).Methods("DELETE")
 	protectedRoutes.HandleFunc("/following", followHandler.GetFollowing).Methods("GET")
 	protectedRoutes.HandleFunc("/followers", followHandler.GetFollowers).Methods("GET")
 	protectedRoutes.HandleFunc("/friends", followHandler.GetFriends).Methods("GET")
@@ -105,22 +105,22 @@ func main() {
 	// Post routes
 	protectedRoutes.HandleFunc("/post", postHandler.CreatePost).Methods("POST")
 	publicRoutes.HandleFunc("/post", postHandler.GetPost).Methods("GET")
-	protectedRoutes.HandleFunc("/post/update", postHandler.UpdatePost).Methods("PUT")
-	protectedRoutes.HandleFunc("/post/delete", postHandler.DeletePost).Methods("DELETE")
+	protectedRoutes.HandleFunc("/post", postHandler.UpdatePost).Methods("PUT")
+	protectedRoutes.HandleFunc("/post", postHandler.DeletePost).Methods("DELETE")
 	protectedRoutes.HandleFunc("/post/community", postHandler.GetPostsByCommunity).Methods("GET")
 	publicRoutes.HandleFunc("/post/user", postHandler.GetPostsByUser).Methods("GET")
 
 	// Comment routes
 	protectedRoutes.HandleFunc("/post/comment", commentHandler.CreateComment).Methods("POST")
-	protectedRoutes.HandleFunc("/post/comment/update", commentHandler.UpdateComment).Methods("PUT")
-	protectedRoutes.HandleFunc("/post/comment/delete", commentHandler.DeleteComment).Methods("DELETE")
+	protectedRoutes.HandleFunc("/post/comment", commentHandler.UpdateComment).Methods("PUT")
+	protectedRoutes.HandleFunc("/post/comment", commentHandler.DeleteComment).Methods("DELETE")
 	protectedRoutes.HandleFunc("/post/comments", commentHandler.GetCommentsByPostID).Methods("GET")
 
 	// Interaction routes
 	// r.HandleFunc("/post/comments", interactionHandler.GetPostComments).Methods("GET")
 	protectedRoutes.HandleFunc("/post/likes", interactionHandler.GetPostLikes).Methods("GET")
 	protectedRoutes.HandleFunc("/post/like", interactionHandler.LikePost).Methods("POST")
-	protectedRoutes.HandleFunc("/post/unlike", interactionHandler.UnlikePost).Methods("DELETE")
+	protectedRoutes.HandleFunc("/post/like", interactionHandler.UnlikePost).Methods("DELETE")
 
 	// Start the HTTP server
 	log.Println("Server is running on port 8081")

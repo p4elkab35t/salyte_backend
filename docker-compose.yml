@@ -94,3 +94,6 @@ volumes:
 networks:
   salyte:
     driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: salyte
+      com.docker.network.bridge.host_binding_ipv4: "127.0.0.1"
