@@ -390,7 +390,15 @@ Below is an API for each of the service (only API for main API gateway)
 #### /createChat
 - **Method**: POST
 - **Description**: Create a new chat.
-- **Body**: `{ ... }`
+- **Body**: 
+    ```json
+    {
+        "chat": {
+            "name": "string"
+        },
+        "users": ["string"]
+    }
+    ```
 - **Response**: 
   ```json
   {
