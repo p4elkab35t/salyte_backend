@@ -10,6 +10,7 @@ const routes = new Map<string, { method: string[], handler: Function }>([
     ["/friends", { method: ["GET", "POST"], handler: proxyToSocialService }],
     ["/community", { method: ["GET", "POST", "PUT"], handler: proxyToSocialService }],
     ["/post", { method: ["GET", "POST", "PUT", "DELETE"], handler: proxyToSocialService }],
+    ["/post/user", { method: ["GET"], handler: proxyToSocialService }],
     ["/post/comment", { method: ["POST", "PUT", "DELETE"], handler: proxyToSocialService }],
     ["/post/comments", { method: ["GET"], handler: proxyToSocialService }],
     ["/post/likes", { method: ["GET"], handler: proxyToSocialService }],
