@@ -1,7 +1,8 @@
 import { Logger } from "../../logger/logger";
 import authServiceHandler from "../secure/hadnlers/auth.handler";
+import { CONFIG } from "../../config/config";
 
-const socialServiceURL = "http://localhost:8081/social";
+const socialServiceURL = `http://${CONFIG.SOCIAL_SERVICE_URL}/social`;
 
 const routes = new Map<string, { method: string[], handler: Function }>([
     ["/profile", { method: ["GET", "PUT"], handler: proxyToSocialService }],
