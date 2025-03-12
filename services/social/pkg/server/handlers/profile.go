@@ -66,7 +66,7 @@ func (h *ProfileHandler) GetProfile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if profileID != "" {
-		profile, err := h.profileLogic.GetProfileByID(ctx, userID)
+		profile, err := h.profileLogic.GetProfileByID(ctx, profileID)
 		if err != nil {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusInternalServerError)
