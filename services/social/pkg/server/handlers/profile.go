@@ -70,13 +70,6 @@ func (h *ProfileHandler) GetProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if userID != "" && profileID != "" {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{"error": "only one of userID or profileID query parameter is allowed"})
-		return
-	}
-
 	if userID != "" {
 		profile, err := h.profileLogic.GetProfileByUserID(ctx, userID)
 		if err != nil {
