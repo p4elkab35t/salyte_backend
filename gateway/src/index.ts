@@ -7,6 +7,16 @@ import { Logger } from "./logger/logger";
 import socialServiceHandler from "./router/social/social.handler";
 import messageServiceHandler from "./router/message/message.rest.handler";
 import websocketHandler from "./router/message/message.handler"
+import type { BodyInit, ResponseInit } from "undici-types";
+
+export class ClientResponse extends Response {
+  constructor(body?: any, init?: any) {
+    super(body, init);
+    this.headers.set("Access-Control-Allow-Origin", "*");
+    this.headers.set("Access-Control-Allow-Methods", "OPTIONS, GET, PUT, POST, DELETE");
+    this.headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  }
+}
 
 
 // console.log(import.meta.dir);
@@ -21,6 +31,12 @@ const services = new Map<string, Function>([
 const server: Bun.Server = Bun.serve({
     port: CONFIG.PORT,
     fetch(req: Request, s){
+
+      if (req.method === 'OPTIONS') {
+        const res = new Response('Departed');
+        return res;
+      }
+
       const url = new URL(req.url);
       const apiCheck = url.pathname.split("/")[1];
 
