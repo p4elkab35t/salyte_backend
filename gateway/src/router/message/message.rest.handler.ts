@@ -1,8 +1,9 @@
-// In Bun, we use the global fetch and Request/Response objects.
+// In Bun, we use the global fetch and Request/corsResponse objects.
 import { Logger } from "../../logger/logger";
+import { corsResponse } from "../../misc/request";
   
 // Handler functions
-async function handleGetMessagesByChatID(req: Request): Promise<Response> {
+async function handleGetMessagesByChatID(req: Request): Promise<corsResponse> {
   const { searchParams } = new URL(req.url);
   const chat_id = searchParams.get("chat_id") || "";
   const user_id = searchParams.get("user_id") || "";
@@ -11,10 +12,10 @@ async function handleGetMessagesByChatID(req: Request): Promise<Response> {
       headers: { "Content-Type": "application/json" }
   });
   const result = await response.json();
-  return new Response(JSON.stringify(result), { headers: { "Content-Type": "application/json" } });
+  return new corsResponse(JSON.stringify(result), { headers: { "Content-Type": "application/json" } });
 }
 
-async function handleGetUnreadMessages(req: Request): Promise<Response> {
+async function handleGetUnreadMessages(req: Request): Promise<corsResponse> {
   const { searchParams } = new URL(req.url);
   const user_id = searchParams.get("user_id") || "";
   const response = await fetch(`http://localhost:8083/message/unread?userID=${user_id}`, {
@@ -22,10 +23,10 @@ async function handleGetUnreadMessages(req: Request): Promise<Response> {
       headers: { "Content-Type": "application/json" }
   });
   const result = await response.json();
-  return new Response(JSON.stringify(result), { headers: { "Content-Type": "application/json" } });
+  return new corsResponse(JSON.stringify(result), { headers: { "Content-Type": "application/json" } });
 }
 
-async function handleDeleteAllMessagesByChatID(req: Request): Promise<Response> {
+async function handleDeleteAllMessagesByChatID(req: Request): Promise<corsResponse> {
   const { searchParams } = new URL(req.url);
   const chat_id = searchParams.get("chat_id") || "";
   const user_id = searchParams.get("user_id") || "";
@@ -36,10 +37,10 @@ async function handleDeleteAllMessagesByChatID(req: Request): Promise<Response> 
       body: JSON.stringify(body)
   });
   const result = await response.json();
-  return new Response(JSON.stringify(result), { headers: { "Content-Type": "application/json" } });
+  return new corsResponse(JSON.stringify(result), { headers: { "Content-Type": "application/json" } });
 }
 
-async function handleGetChat(req: Request): Promise<Response> {
+async function handleGetChat(req: Request): Promise<corsResponse> {
   const { searchParams } = new URL(req.url);
   const chat_id = searchParams.get("chat_id") || "";
   const response = await fetch(`http://localhost:8083/chat/get?chatID=${chat_id}`, {
@@ -47,10 +48,10 @@ async function handleGetChat(req: Request): Promise<Response> {
       headers: { "Content-Type": "application/json" }
   });
   const result = await response.json();
-  return new Response(JSON.stringify(result), { headers: { "Content-Type": "application/json" } });
+  return new corsResponse(JSON.stringify(result), { headers: { "Content-Type": "application/json" } });
 }
 
-async function handleCreateChat(req: Request): Promise<Response> {
+async function handleCreateChat(req: Request): Promise<corsResponse> {
   const body = await req.json();
   const response = await fetch("http://localhost:8083/chat/create", {
       method: "POST",
@@ -58,10 +59,10 @@ async function handleCreateChat(req: Request): Promise<Response> {
       body: JSON.stringify(body)
   });
   const result = await response.json();
-  return new Response(JSON.stringify(result), { headers: { "Content-Type": "application/json" } });
+  return new corsResponse(JSON.stringify(result), { headers: { "Content-Type": "application/json" } });
 }
 
-async function handleGetAllChats(req: Request): Promise<Response> {
+async function handleGetAllChats(req: Request): Promise<corsResponse> {
   const { searchParams } = new URL(req.url);
   const user_id = searchParams.get("user_id") || "";
   const response = await fetch(`http://localhost:8083/chat/getall?userID=${user_id}`, {
@@ -69,10 +70,10 @@ async function handleGetAllChats(req: Request): Promise<Response> {
       headers: { "Content-Type": "application/json" }
   });
   const result = await response.json();
-  return new Response(JSON.stringify(result), { headers: { "Content-Type": "application/json" } });
+  return new corsResponse(JSON.stringify(result), { headers: { "Content-Type": "application/json" } });
 }
 
-async function handleAddUserToChat(req: Request): Promise<Response> {
+async function handleAddUserToChat(req: Request): Promise<corsResponse> {
   const { searchParams } = new URL(req.url);
   const chat_id = searchParams.get("chat_id") || "";
   const user_id = searchParams.get("user_id") || "";
@@ -84,10 +85,10 @@ async function handleAddUserToChat(req: Request): Promise<Response> {
       body: JSON.stringify(body)
   });
   const result = await response.json();
-  return new Response(JSON.stringify(result), { headers: { "Content-Type": "application/json" } });
+  return new corsResponse(JSON.stringify(result), { headers: { "Content-Type": "application/json" } });
 }
 
-async function handleRemoveUserFromChat(req: Request): Promise<Response> {
+async function handleRemoveUserFromChat(req: Request): Promise<corsResponse> {
   const { searchParams } = new URL(req.url);
   const chat_id = searchParams.get("chat_id") || "";
   const user_id = searchParams.get("user_id") || "";
@@ -99,10 +100,10 @@ async function handleRemoveUserFromChat(req: Request): Promise<Response> {
       body: JSON.stringify(body)
   });
   const result = await response.json();
-  return new Response(JSON.stringify(result), { headers: { "Content-Type": "application/json" } });
+  return new corsResponse(JSON.stringify(result), { headers: { "Content-Type": "application/json" } });
 }
 
-async function handleGetChatMembers(req: Request): Promise<Response> {
+async function handleGetChatMembers(req: Request): Promise<corsResponse> {
   const { searchParams } = new URL(req.url);
   const chat_id = searchParams.get("chat_id") || "";
   const user_id = searchParams.get("user_id") || "";
@@ -111,10 +112,10 @@ async function handleGetChatMembers(req: Request): Promise<Response> {
       headers: { "Content-Type": "application/json" }
   });
   const result = await response.json();
-  return new Response(JSON.stringify(result), { headers: { "Content-Type": "application/json" } });
+  return new corsResponse(JSON.stringify(result), { headers: { "Content-Type": "application/json" } });
 }
 
-async function handleGetChatByID(req: Request): Promise<Response> {
+async function handleGetChatByID(req: Request): Promise<corsResponse> {
   const { searchParams } = new URL(req.url);
   const chat_id = searchParams.get("chat_id") || "";
   const user_id = searchParams.get("user_id") || "";
@@ -123,10 +124,10 @@ async function handleGetChatByID(req: Request): Promise<Response> {
       headers: { "Content-Type": "application/json" }
   });
   const result = await response.json();
-  return new Response(JSON.stringify(result), { headers: { "Content-Type": "application/json" } });
+  return new corsResponse(JSON.stringify(result), { headers: { "Content-Type": "application/json" } });
 }
 
-async function handleGetReactions(req: Request): Promise<Response> {
+async function handleGetReactions(req: Request): Promise<corsResponse> {
   const { searchParams } = new URL(req.url);
   const message_id = searchParams.get("message_id") || "";
   const user_id = searchParams.get("user_id") || "";
@@ -135,7 +136,7 @@ async function handleGetReactions(req: Request): Promise<Response> {
       headers: { "Content-Type": "application/json" }
   });
   const result = await response.json();
-  return new Response(JSON.stringify(result), { headers: { "Content-Type": "application/json" } });
+  return new corsResponse(JSON.stringify(result), { headers: { "Content-Type": "application/json" } });
 }
 
 // Map of routes with their allowed methods and handlers
@@ -163,18 +164,18 @@ export default async function messageServiceHandler(req: Request, restPath: stri
     const route = routes.get(path);
     if (!route?.method.includes(req.method)) {
       Logger.warn(`Method not allowed`, { path, method: req.method });
-      return new Response(JSON.stringify({ error: "Method Not Allowed" }), { status: 405 });
+      return new corsResponse(JSON.stringify({ error: "Method Not Allowed" }), { status: 405 });
     }
 
     return route.handler(req);
   }
 
   Logger.warn(`Message route not found`, { path });
-  return new Response(JSON.stringify({ error: "Route not found" }), { status: 404 });
+  return new corsResponse(JSON.stringify({ error: "Route not found" }), { status: 404 });
 }
 
 // Keep the original routeMap for backward compatibility
-// const routeMap: Record<string, (req: Request) => Promise<Response>> = {
+// const routeMap: Record<string, (req: Request) => Promise<corsResponse>> = {
 //   "/getMessagesByChatID": handleGetMessagesByChatID,
 //   "/getUnreadMessages": handleGetUnreadMessages,
 //   "/deleteAllMessagesByChatID": handleDeleteAllMessagesByChatID,
