@@ -1,14 +1,9 @@
 package handlers
 
 import (
-	// "context"
 	"encoding/json"
 	"fmt"
 	"net/http"
-
-	// "os/user"
-
-	// "strings"
 
 	"github.com/google/uuid"
 	"github.com/p4elkab35t/salyte_backend/services/social/pkg/logic"
@@ -70,8 +65,8 @@ func (h *ProfileHandler) GetProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if userID != "" {
-		profile, err := h.profileLogic.GetProfileByUserID(ctx, userID)
+	if profileID != "" {
+		profile, err := h.profileLogic.GetProfileByID(ctx, userID)
 		if err != nil {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusInternalServerError)
@@ -82,10 +77,9 @@ func (h *ProfileHandler) GetProfile(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(profile)
-		return
 	}
 
-	profile, err := h.profileLogic.GetProfileByID(ctx, userID)
+	profile, err := h.profileLogic.GetProfileByUserID(ctx, userID)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
@@ -98,7 +92,6 @@ func (h *ProfileHandler) GetProfile(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(profile)
 }
 
-// UpdateProfile handles PUT requests to update a profile.
 func (h *ProfileHandler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	userID := r.URL.Query().Get("userID")
