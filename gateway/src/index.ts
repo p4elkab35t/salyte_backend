@@ -23,7 +23,8 @@ const server: Bun.Server = Bun.serve({
     fetch(req: Request, s){
 
       if (req.method === 'OPTIONS') {
-        const res = new corsResponse('Departed');
+        const res = new corsResponse(null, {
+          status: 200});
         return res;
       }
 

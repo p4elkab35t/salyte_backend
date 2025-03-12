@@ -1,6 +1,7 @@
 import { Logger } from "../../logger/logger";
 import authServiceHandler from "../secure/hadnlers/auth.handler";
 import { CONFIG } from "../../config/config";
+import { corsResponse } from "../../misc/request";
 
 const socialServiceURL = `http://${CONFIG.SOCIAL_SERVICE_URL}/social`;
 
@@ -27,26 +28,26 @@ export default async function socialServiceHandler(req: Request, restPath: strin
         const route = routes.get(path);
         if (!route?.method.includes(req.method)) {
             Logger.warn(`Method not allowed`, { path, method: req.method });
-            return new Response(JSON.stringify({ error: "Method Not Allowed" }), { status: 405 });
+            return new corsResponse(JSON.stringify({ error: "Method Not Allowed" }), { status: 405 });
         }
 
         return route.handler(req, path);
     }
 
     Logger.warn(`Social route not found`, { path });
-    return new Response(JSON.stringify({ error: "Route not found" }), { status: 404 });
+    return new corsResponse(JSON.stringify({ error: "Route not found" }), { status: 404 });
 }
 
 async function proxyToSocialService(req: Request, path: string) {
     const token = req.headers.get("Authorization")?.split("Bearer ")[1];
     if (!token) {
-        return new Response(JSON.stringify({ error: "No token provided" }), { status: 401 });
+        return new corsResponse(JSON.stringify({ error: "No token provided" }), { status: 401 });
     }
 
     const userID = await verifyToken(token);
     console.log(userID);
     if (!userID) {
-        return new Response(JSON.stringify({ error: "Invalid token" }), { status: 401 });
+        return new corsResponse(JSON.stringify({ error: "Invalid token" }), { status: 401 });
     }
 
     const url = new URL(req.url);
@@ -61,7 +62,7 @@ async function proxyToSocialService(req: Request, path: string) {
     const response = await fetch(socialReq);
     const data = await response.json();
 
-    return new Response(JSON.stringify(data), { status: response.status });
+    return new corsResponse(JSON.stringify(data), { status: response.status });
 }
 
 async function verifyToken(token: string): Promise<string | null> {
