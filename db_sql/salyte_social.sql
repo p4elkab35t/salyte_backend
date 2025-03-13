@@ -115,6 +115,9 @@ CREATE TABLE public.communitymembers (
 
 ALTER TABLE public.communitymembers OWNER TO postgres;
 
+ALTER TABLE public.communitymembers
+    ADD CONSTRAINT member_sequence UNIQUE (community_id, profile_id);
+
 --
 -- TOC entry 219 (class 1259 OID 24839)
 -- Name: followers; Type: TABLE; Schema: public; Owner: postgres
@@ -130,6 +133,8 @@ CREATE TABLE public.followers (
 
 ALTER TABLE public.followers OWNER TO postgres;
 
+ALTER TABLE ONLY public.followers
+    ADD CONSTRAINT follower_sequence UNIQUE (follower_profile_id, followed_profile_id);
 --
 -- TOC entry 220 (class 1259 OID 24856)
 -- Name: interchange; Type: TABLE; Schema: public; Owner: postgres
@@ -146,6 +151,8 @@ CREATE TABLE public.interchange (
 
 
 ALTER TABLE public.interchange OWNER TO postgres;
+ALTER TABLE public.interchange
+    ADD CONSTRAINT interchange_sequence UNIQUE (profile_id, friend_profile_id);
 
 --
 -- TOC entry 228 (class 1259 OID 24983)
@@ -162,6 +169,8 @@ CREATE TABLE public.likes (
 
 ALTER TABLE public.likes OWNER TO postgres;
 
+ALTER TABLE public.likes
+    ADD CONSTRAINT like_sequence UNIQUE (profile_id, post_id);
 --
 -- TOC entry 225 (class 1259 OID 24926)
 -- Name: posts; Type: TABLE; Schema: public; Owner: postgres
