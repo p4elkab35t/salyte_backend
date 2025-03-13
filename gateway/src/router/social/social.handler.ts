@@ -8,6 +8,8 @@ const socialServiceURL = `http://${CONFIG.SOCIAL_SERVICE_URL}/social`;
 const routes = new Map<string, { method: string[], handler: Function }>([
     ["/profile", { method: ["GET", "PUT"], handler: proxyToSocialService }],
     ["/follow", { method: ["POST", "DELETE"], handler: proxyToSocialService }],
+    ["/following", { method: ["GET"], handler: proxyToSocialService }],
+    ["/followers", { method: ["GET"], handler: proxyToSocialService }],
     ["/friends", { method: ["GET", "POST"], handler: proxyToSocialService }],
     ["/community", { method: ["GET", "POST", "PUT"], handler: proxyToSocialService }],
     ["/post", { method: ["GET", "POST", "PUT", "DELETE"], handler: proxyToSocialService }],
