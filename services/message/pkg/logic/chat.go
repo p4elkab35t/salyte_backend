@@ -127,6 +127,20 @@ func (s *ChatService) GetChatMembers(ctx context.Context, userID, chatID uuid.UU
 func (s *ChatService) GetChatByTwoUsers(ctx context.Context, userID, secondUserID uuid.UUID) (*models.Chat, error) {
 	chatMembers := []uuid.UUID{userID, secondUserID}
 	chat, err := s.messageRepo.GetChatByMembers(ctx, chatMembers)
+	if chat == nil {
+		users := []*models.ChatMember{
+			{UserID: userID},
+			{UserID: secondUserID},
+		}
+		chatName := "Chat for " + userID.String() + " and " + secondUserID.String()
+		chat = &models.Chat{Name: chatName}
+		chat, err = s.CreateChat(ctx, users, chat)
+		if err != nil {
+			return nil, err
+		}
+
+		return s.messageRepo.GetChatByID(ctx, chat.ID)
+	}
 	if err != nil {
 		return nil, err
 	}
