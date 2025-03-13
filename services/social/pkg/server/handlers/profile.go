@@ -35,9 +35,12 @@ func (h *ProfileHandler) CreateProfile(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println(user)
 
+	var defaultAvatarURL = "https://img.freepik.com/premium-vector/man-empty-avatar-casual-business-style-vector-photo-placeholder-social-networks-resumes_885953-434.jpg"
+
 	profileModel := models.Profile{
-		UserID:   uuid.MustParse(user.UserID),
-		Username: user.Email,
+		UserID:            uuid.MustParse(user.UserID),
+		Username:          user.Email,
+		ProfilePictureURL: &defaultAvatarURL,
 	}
 
 	profile, err := h.profileLogic.CreateProfile(ctx, &profileModel)

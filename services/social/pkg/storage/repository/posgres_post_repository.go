@@ -61,6 +61,7 @@ func (r *PostgresRepositorySQL) GetAllPosts(ctx context.Context) ([]*models.Post
 	query := `
 		SELECT post_id, profile_id, community_id, content, media_url, visibility, created_at, updated_at
 		FROM Posts
+		SORT BY created_at DESC
 	`
 	rows, err := r.db.Query(ctx, query)
 	if err != nil {
@@ -111,6 +112,7 @@ func (r *PostgresRepositorySQL) GetPostsByUserID(ctx context.Context, userID str
 		SELECT post_id, profile_id, community_id, content, media_url, visibility, created_at, updated_at
 		FROM Posts
 		WHERE profile_id = $1
+		SORT BY created_at DESC
 	`
 	rows, err := r.db.Query(ctx, query, userID)
 	if err != nil {
@@ -136,6 +138,7 @@ func (r *PostgresRepositorySQL) GetPostsByCommunityID(ctx context.Context, commu
 		SELECT post_id, profile_id, community_id, content, media_url, visibility, created_at, updated_at
 		FROM Posts
 		WHERE community_id = $1
+		SORT BY created_at DESC
 	`
 	rows, err := r.db.Query(ctx, query, communityID)
 	if err != nil {
@@ -193,6 +196,7 @@ func (r *PostgresRepositorySQL) GetAllComments(ctx context.Context) ([]*models.C
 	query := `
 		SELECT comment_id, profile_id, post_id, content, created_at, updated_at
 		FROM Comments
+		SORT BY created_at DESC
 	`
 	rows, err := r.db.Query(ctx, query)
 	if err != nil {
@@ -243,6 +247,7 @@ func (r *PostgresRepositorySQL) GetCommentsByPostID(ctx context.Context, postID 
 		SELECT comment_id, profile_id, post_id, content, created_at, updated_at
 		FROM Comments
 		WHERE post_id = $1
+		SORT BY created_at DESC
 	`
 	rows, err := r.db.Query(ctx, query, postID)
 	if err != nil {
@@ -268,6 +273,7 @@ func (r *PostgresRepositorySQL) GetPostComments(ctx context.Context, postID stri
 		SELECT comment_id, profile_id, post_id, content, created_at, updated_at
 		FROM Comments
 		WHERE post_id = $1
+		SORT BY created_at DESC
 	`
 	rows, err := r.db.Query(ctx, query, postID)
 	if err != nil {
@@ -294,6 +300,7 @@ func (r *PostgresRepositorySQL) GetPostLikes(ctx context.Context, postID string)
 		FROM Likes l
 		JOIN Profile p ON l.profile_id = p.profile_id
 		WHERE l.post_id = $1
+		
 	`
 	rows, err := r.db.Query(ctx, query, postID)
 	if err != nil {
