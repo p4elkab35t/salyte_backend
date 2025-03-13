@@ -148,6 +148,7 @@ func InjectProfileMiddleware(profileService *logic.ProfileService) mux.Middlewar
 
 			// Store profile in request context
 			ctx := context.WithValue(r.Context(), "profileID", profile.ProfileID)
+			ctx = context.WithValue(ctx, "userID", profile.UserID)
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})
 	}
