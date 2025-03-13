@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/google/uuid"
 	"github.com/p4elkab35t/salyte_backend/services/message/pkg/logic"
@@ -22,18 +23,17 @@ func (h *MessageHandler) GetMessagesByChatID(w http.ResponseWriter, r *http.Requ
 	chatID := r.URL.Query().Get("chatID")
 	userID := r.URL.Query().Get("userID")
 
+	Limit := r.URL.Query().Get("limit")
+	Offset := r.URL.Query().Get("offset")
+
 	// crate type for json parisng and parse limit and offset from body
 	var requestBody struct {
 		Limit  int `json:"limit"`
 		Offset int `json:"offset"`
 	}
 
-	if err := json.NewDecoder(r.Body).Decode(&requestBody); err != nil {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{"error": "invalid request body"})
-		return
-	}
+	requestBody.Limit, _ = strconv.Atoi(Limit)
+	requestBody.Offset, _ = strconv.Atoi(Offset)
 
 	if requestBody.Limit == 0 {
 		requestBody.Limit = 10

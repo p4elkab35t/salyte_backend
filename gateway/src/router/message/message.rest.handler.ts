@@ -12,13 +12,11 @@ async function handleGetMessagesByChatID(req: Request): Promise<corsResponse> {
   const { searchParams } = new URL(req.url);
   const chat_id = searchParams.get("chat_id") || "";
   const user_id = searchParams.get("user_id") || "";
-  const body = await req.json();
-  const limit = body.limit || 10;
-  const offset = body.offset || 0;
-  const response = await fetch(`http://${MESSAGE_URL}/getallbychat?chatID=${chat_id}&userID=${user_id}`, {
+  const limit = searchParams.get("limit") || 10;
+  const offset = searchParams.get("offset") || 0;
+  const response = await fetch(`http://${MESSAGE_URL}/getallbychat?chatID=${chat_id}&userID=${user_id}&limit=${limit}&offset=${offset}`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ 'limit': limit, 'offset': offset })
   });
   const result = await response.json();
   return new corsResponse(JSON.stringify(result), { headers: { "Content-Type": "application/json" } });
