@@ -31,7 +31,7 @@ func (h *PostHandler) GetPost(w http.ResponseWriter, r *http.Request) {
 	if postID == "" {
 		page := r.URL.Query().Get("page")
 		limit := r.URL.Query().Get("limit")
-		if page == "" || limit == "" {
+		if page != "" || limit != "" {
 			page, err := strconv.Atoi(r.URL.Query().Get("page"))
 			if err != nil {
 				w.Header().Set("Content-Type", "application/json")
@@ -54,7 +54,7 @@ func (h *PostHandler) GetPost(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 		} else {
-			posts, err = h.postLogic.GetAllPosts(ctx, 0, 100)
+			posts, err = h.postLogic.GetAllPosts(ctx, 1, 100)
 			if err != nil {
 				w.Header().Set("Content-Type", "application/json")
 				w.WriteHeader(http.StatusInternalServerError)
