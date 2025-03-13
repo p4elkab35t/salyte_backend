@@ -125,7 +125,7 @@ func (h *ProfileHandler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Println("id:", id)
-	profile.ProfileID = id
+	profile.UserID = id
 
 	if err := h.profileLogic.UpdateProfile(ctx, profile); err != nil {
 		fmt.Println("error:", err)
