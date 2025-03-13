@@ -98,6 +98,7 @@ func startHTTPServer(wg *sync.WaitGroup, messageService *logic.MessageService, c
 	r.HandleFunc("/chat/removeuser", chatHandler.RemoveUserFromChat).Methods("POST")
 	r.HandleFunc("/chat/members", chatHandler.GetChatMembers).Methods("GET")
 	r.HandleFunc("/chat/messages", chatHandler.GetChatByID).Methods("GET")
+	r.HandleFunc("/chat/getbymembers", chatHandler.GetChatByMembers).Methods("GET")
 
 	// reaction routes
 	r.HandleFunc("/reaction/get", reactionHandler.GetReactions).Methods("GET")

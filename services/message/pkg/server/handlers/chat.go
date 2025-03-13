@@ -160,3 +160,28 @@ func (h *ChatHandler) GetChatByID(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(messages)
 }
+
+func (h *ChatHandler) GetChatByMembers(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	userID := r.URL.Query().Get("userID")
+	memberID := r.URL.Query().Get("memberID")
+
+	if userID == "" || memberID == "" {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "invalid request body"})
+		return
+	}
+
+	chat, err := h.chatLogic.GetChatByTwoUsers(ctx, uuid.MustParse(userID), uuid.MustParse(memberID))
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(chat)
+}
