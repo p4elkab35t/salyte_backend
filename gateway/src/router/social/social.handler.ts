@@ -59,10 +59,11 @@ async function proxyToSocialService(req: Request, path: string) {
         body: req.body,
     });
 
-    const response = await fetch(socialReq);
-    const data = await response.json();
-
-    return new corsResponse(JSON.stringify(data), { status: response.status });
+    return await fetch(socialReq).then((res) => res.json()).then((data) => {
+        return new corsResponse(JSON.stringify(data), { status: 200 });
+    }).catch((err) => {
+        return new corsResponse(JSON.stringify({ error: `Internal Server Error: ${err}` }), { status: 500 });
+    });
 }
 
 async function verifyToken(token: string): Promise<string | null> {
