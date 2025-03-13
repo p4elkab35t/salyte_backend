@@ -82,7 +82,7 @@ func (r *PostgresRepositorySQL) GetMessagesByChatID(ctx context.Context, chatID 
 	}
 	rows, err := r.db.Query(ctx,
 		"SELECT message_id, chat_id, sender_id, content, created_at, updated_at, is_deleted FROM messages WHERE chat_id = $1 AND is_deleted = FALSE ORDER BY created_at DESC LIMIT $2 OFFSET $3",
-		chatID, limit, offset)
+		chatID, limit, offset*limit)
 	if err != nil {
 		return nil, err
 	}
