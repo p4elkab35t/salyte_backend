@@ -82,9 +82,9 @@ func main() {
 	// Profile routes
 	publicRoutes.HandleFunc("/profile", profileHandler.CreateProfile).Methods("POST")
 	publicRoutes.HandleFunc("/profile", profileHandler.GetProfile).Methods("GET")
-	protectedRoutes.HandleFunc("/profile/update", profileHandler.UpdateProfile).Methods("PUT")
+	protectedRoutes.HandleFunc("/profile", profileHandler.UpdateProfile).Methods("PUT")
 	protectedRoutes.HandleFunc("/profile/settings", profileHandler.GetProfileSettings).Methods("GET")
-	protectedRoutes.HandleFunc("/profile/settings/update", profileHandler.UpdateProfileSettings).Methods("PUT")
+	protectedRoutes.HandleFunc("/profile/settings", profileHandler.UpdateProfileSettings).Methods("PUT")
 
 	// Follow routes
 
@@ -93,13 +93,13 @@ func main() {
 	protectedRoutes.HandleFunc("/following", followHandler.GetFollowing).Methods("GET")
 	protectedRoutes.HandleFunc("/followers", followHandler.GetFollowers).Methods("GET")
 	protectedRoutes.HandleFunc("/friends", followHandler.GetFriends).Methods("GET")
-	protectedRoutes.HandleFunc("/friends/add", followHandler.MakeFriend).Methods("POST")
-	protectedRoutes.HandleFunc("/friends/remove", followHandler.Unfriend).Methods("POST")
+	protectedRoutes.HandleFunc("/friends", followHandler.MakeFriend).Methods("POST")
+	protectedRoutes.HandleFunc("/friends", followHandler.Unfriend).Methods("DELETE")
 
 	// Community routes
 	protectedRoutes.HandleFunc("/community", communityHandler.CreateCommunity).Methods("POST")
 	protectedRoutes.HandleFunc("/community", communityHandler.GetCommunity).Methods("GET")
-	protectedRoutes.HandleFunc("/community/update", communityHandler.UpdateCommunity).Methods("PUT")
+	protectedRoutes.HandleFunc("/community", communityHandler.UpdateCommunity).Methods("PUT")
 	protectedRoutes.HandleFunc("/community/members", communityHandler.GetCommunityMembers).Methods("GET")
 
 	// Post routes
