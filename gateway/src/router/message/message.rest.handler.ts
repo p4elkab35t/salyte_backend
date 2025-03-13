@@ -3,9 +3,9 @@ import { Logger } from "../../logger/logger";
 import { corsResponse } from "../../misc/request";
 import { CONFIG } from "../../config/config";
 
-const MESSAGE_URL = `http://${CONFIG.MESSAGE_REST_SERVICE_URL}/message`;
-const CHAT_URL = `http://${CONFIG.MESSAGE_REST_SERVICE_URL}/chat`;
-const REACTION_URL = `http://${CONFIG.MESSAGE_REST_SERVICE_URL}/reaction`;
+const MESSAGE_URL = `${CONFIG.MESSAGE_REST_SERVICE_URL}/message`;
+const CHAT_URL = `${CONFIG.MESSAGE_REST_SERVICE_URL}/chat`;
+const REACTION_URL = `${CONFIG.MESSAGE_REST_SERVICE_URL}/reaction`;
   
 // Handler functions
 async function handleGetMessagesByChatID(req: Request): Promise<corsResponse> {
