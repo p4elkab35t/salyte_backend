@@ -12,7 +12,7 @@ type PostRepository interface {
 	// Get post by id
 	GetPostByID(ctx context.Context, id string) (*models.Post, error)
 	// Get all posts
-	GetAllPosts(ctx context.Context) ([]*models.Post, error)
+	GetAllPosts(ctx context.Context, page, limit int) ([]*models.Post, error)
 	// Update post by id
 	UpdatePost(ctx context.Context, post *models.Post) error
 	// Delete post by id

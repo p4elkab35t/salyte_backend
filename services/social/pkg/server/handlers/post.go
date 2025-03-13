@@ -4,6 +4,7 @@ import (
 	// "context"
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/google/uuid"
 	"github.com/p4elkab35t/salyte_backend/services/social/pkg/logic"
@@ -22,14 +23,44 @@ func NewPostHandler(postLogic *logic.PostService) *PostHandler {
 func (h *PostHandler) GetPost(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	postID := r.URL.Query().Get("postID")
+	var (
+		posts []*models.Post
+		err   error
+	)
 
 	if postID == "" {
-		posts, err := h.postLogic.GetAllPosts(ctx)
-		if err != nil {
-			w.Header().Set("Content-Type", "application/json")
-			w.WriteHeader(http.StatusInternalServerError)
-			json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
-			return
+		page := r.URL.Query().Get("page")
+		limit := r.URL.Query().Get("limit")
+		if page == "" || limit == "" {
+			page, err := strconv.Atoi(r.URL.Query().Get("page"))
+			if err != nil {
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(http.StatusBadRequest)
+				json.NewEncoder(w).Encode(map[string]string{"error": "invalid page number"})
+				return
+			}
+			limit, err := strconv.Atoi(r.URL.Query().Get("limit"))
+			if err != nil {
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(http.StatusBadRequest)
+				json.NewEncoder(w).Encode(map[string]string{"error": "invalid page number"})
+				return
+			}
+			posts, err = h.postLogic.GetAllPosts(ctx, page, limit)
+			if err != nil {
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(http.StatusInternalServerError)
+				json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
+				return
+			}
+		} else {
+			posts, err = h.postLogic.GetAllPosts(ctx, 0, 100)
+			if err != nil {
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(http.StatusInternalServerError)
+				json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
+				return
+			}
 		}
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)

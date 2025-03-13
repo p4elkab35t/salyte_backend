@@ -57,13 +57,14 @@ func (r *PostgresRepositorySQL) GetPostByID(ctx context.Context, id string) (*mo
 	return &post, nil
 }
 
-func (r *PostgresRepositorySQL) GetAllPosts(ctx context.Context) ([]*models.Post, error) {
+func (r *PostgresRepositorySQL) GetAllPosts(ctx context.Context, page, limit int) ([]*models.Post, error) {
 	query := `
 		SELECT post_id, profile_id, community_id, content, media_url, visibility, created_at, updated_at
 		FROM Posts
 		ORDER BY created_at DESC
+		LIMIT $1 OFFSET $2
 	`
-	rows, err := r.db.Query(ctx, query)
+	rows, err := r.db.Query(ctx, query, limit, page*limit)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get all posts: %w", err)
 	}

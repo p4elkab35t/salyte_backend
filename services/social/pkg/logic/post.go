@@ -30,8 +30,8 @@ func (s *PostService) GetPostByID(ctx context.Context, id string) (*models.Post,
 }
 
 // GetAllPosts retrieves all posts.
-func (s *PostService) GetAllPosts(ctx context.Context) ([]*models.Post, error) {
-	return s.postRepo.GetAllPosts(ctx)
+func (s *PostService) GetAllPosts(ctx context.Context, page, limit int) ([]*models.Post, error) {
+	return s.postRepo.GetAllPosts(ctx, page, limit)
 }
 
 // UpdatePost updates an existing post.
