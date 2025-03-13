@@ -96,16 +96,30 @@ func (h *ProfileHandler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	userID := r.URL.Query().Get("userID")
 
-	var profile models.Profile
+	var profile *models.Profile
 	if err := json.NewDecoder(r.Body).Decode(&profile); err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(map[string]string{"error": "invalid request body"})
 		return
 	}
+	if profile == nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "profile data is missing"})
+		return
+	}
 
-	profile.ProfileID = uuid.MustParse(userID)
-	if err := h.profileLogic.UpdateProfile(ctx, &profile); err != nil {
+	id, err := uuid.Parse(userID)
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "invalid userID"})
+		return
+	}
+	profile.ProfileID = id
+
+	if err := h.profileLogic.UpdateProfile(ctx, profile); err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})

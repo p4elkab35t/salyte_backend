@@ -60,8 +60,6 @@ async function proxyToSocialService(req: Request, path: string) {
     });
 
     const response = await fetch(socialReq);
-    console.log(response.body);
-    console.log(response.blob);
     const data = await response.json();
 
     return new corsResponse(JSON.stringify(data), { status: response.status });
